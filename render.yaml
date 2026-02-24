@@ -58,7 +58,6 @@ services:
   - type: web
     name: rms-user-frontend
     runtime: static
-    plan: free
     rootDir: User_side
     buildCommand: npm install && npm run build
     staticPublishPath: dist
@@ -82,7 +81,6 @@ services:
   - type: web
     name: rms-admin-frontend
     runtime: static
-    plan: free
     rootDir: Admin_side/frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
