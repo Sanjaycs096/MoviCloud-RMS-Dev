@@ -1,0 +1,111 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Render Blueprint — MOVICLOUD Restaurant Management System
+# 4 services:
+#   1. user-api      Flask backend  (User_side/backend)
+#   2. admin-api     FastAPI backend (Admin_side/backend)
+#   3. user-frontend React static site (User_side)
+#   4. admin-frontend React static site (Admin_side/frontend)
+#
+# Before deploying, set these env vars in the Render dashboard:
+#   MONGODB_URI         — your MongoDB Atlas connection string (both backends)
+#   CORS_EXTRA_ORIGINS  — comma-separated list of your deployed frontend URLs
+#                         e.g. https://rms-user.onrender.com,https://rms-admin.onrender.com
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── 1. User-side Flask API ──────────────────────────────────────────────────
+  - type: web
+    name: rms-user-api
+    runtime: python
+    region: oregon
+    plan: free
+    rootDir: User_side/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: MONGODB_URI
+        sync: false          # Set this in the Render dashboard
+      - key: CORS_ORIGINS
+        value: "*"           # Tightened via CORS_EXTRA_ORIGINS in Admin API; Flask API uses * for simplicity
+      - key: FLASK_ENV
+        value: production
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+  # ── 2. Admin-side FastAPI ───────────────────────────────────────────────────
+  - type: web
+    name: rms-admin-api
+    runtime: python
+    region: oregon
+    plan: free
+    rootDir: Admin_side/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: MONGODB_URI
+        sync: false          # Set this in the Render dashboard
+      - key: CORS_EXTRA_ORIGINS
+        sync: false          # Set to comma-separated deployed frontend URLs
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+  # ── 3. User-side React frontend ─────────────────────────────────────────────
+  - type: web
+    name: rms-user-frontend
+    runtime: static
+    region: oregon
+    plan: free
+    rootDir: User_side
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          name: rms-user-api
+          type: web
+          property: url
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    autoDeploy: true
+
+  # ── 4. Admin-side React frontend ────────────────────────────────────────────
+  - type: web
+    name: rms-admin-frontend
+    runtime: static
+    region: oregon
+    plan: free
+    rootDir: Admin_side/frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: rms-admin-api
+          type: web
+          property: url
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    autoDeploy: true

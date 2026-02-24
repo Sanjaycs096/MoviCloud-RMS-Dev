@@ -1,0 +1,362 @@
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { IndianRupee, ShoppingCart, TrendingUp, Users, AlertCircle, Activity, Package, ChefHat, UserCog, Clock, Radio } from 'lucide-react';
+import { API_BASE_URL } from '@/utils/supabase/info';
+import { DataSeeder } from '@/app/components/data-seeder';
+import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+import { Button } from '@/app/components/ui/button';
+import { Badge } from '@/app/components/ui/badge';
+import { LoadingSpinner } from '@/app/components/ui/loading-spinner';
+
+interface Analytics {
+  totalOrders: number;
+  completedOrders: number;
+  totalRevenue: number;
+  avgOrderValue: number;
+  popularItems: Array<{ 
+    name: string; 
+    count: number;
+    revenue: number;
+    avgPrepTime: number;
+  }>;
+  tableOccupancy: number;
+  activeOrders: number;
+  // Staff data
+  totalStaff: number;
+  onDutyStaff: number;
+  onLeaveStaff: number;
+}
+
+export function AdminDashboard() {
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+
+  useEffect(() => {
+    fetchAnalytics();
+    const interval = setInterval(() => {
+      fetchAnalytics();
+    }, 10000); // Refresh every 10 seconds for live updates
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchAnalytics = async () => {
+    try {
+      setError(null);
+      const response = await fetch(
+        `${API_BASE_URL}/analytics`,
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (result.success) {
+        setAnalytics(result.data);
+        setLastUpdated(new Date());
+      } else {
+        throw new Error(result.error || 'Failed to fetch analytics');
+      }
+    } catch (error) {
+      // Silently handle error and use default data
+      if (!analytics) {
+        setAnalytics({
+          totalOrders: 0,
+          completedOrders: 0,
+          totalRevenue: 0,
+          avgOrderValue: 0,
+          popularItems: [],
+          tableOccupancy: 0,
+          activeOrders: 0,
+          totalStaff: 0,
+          onDutyStaff: 0,
+          onLeaveStaff: 0,
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <LoadingSpinner message="Loading dashboard..." />;
+  }
+
+  return (
+    <div className="bg-admin-module min-h-screen p-6 space-y-6">
+      {/* Header with Live Indicator */}
+      <div className="module-container flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-white drop-shadow-lg">Admin Dashboard</h1>
+          <p className="text-gray-200">Restaurant management overview</p>
+        </div>
+        <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm border">
+          <Radio className="h-4 w-4 text-green-600 animate-pulse" />
+          <div className="text-sm">
+            <span className="font-medium text-green-600">Live status</span>
+            <span className="text-muted-foreground"> • Auto updated</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Error Alert */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Connection Error</AlertTitle>
+          <AlertDescription className="flex items-center justify-between">
+            <span>{error}. The system may not be fully connected.</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchAnalytics}
+              className="ml-4"
+            >
+              Retry
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Quick Start */}
+      {analytics?.totalOrders === 0 && (
+        <DataSeeder />
+      )}
+
+      {/* Stats Cards - Row 1: Financial & Orders */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card style={{ backgroundColor: '#FFFFFF' }}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <IndianRupee className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold" style={{ color: '#000000' }}>₹{(analytics?.totalRevenue ?? 0).toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">
+              {analytics?.completedOrders || 0} completed orders
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card style={{ backgroundColor: '#FFFFFF' }}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Orders</CardTitle>
+            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold" style={{ color: '#000000' }}>{analytics?.activeOrders || 0}</div>
+            <p className="text-xs text-muted-foreground">Currently processing</p>
+          </CardContent>
+        </Card>
+
+        <Card style={{ backgroundColor: '#FFFFFF' }}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg Order Value</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold" style={{ color: '#000000' }}>₹{(analytics?.avgOrderValue ?? 0).toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">Per completed order</p>
+          </CardContent>
+        </Card>
+
+        <Card style={{ backgroundColor: '#FFFFFF' }}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Table Occupancy</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold" style={{ color: '#000000' }}>{(analytics?.tableOccupancy ?? 0).toFixed(0)}%</div>
+            <p className="text-xs text-muted-foreground">Current capacity</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Stats Cards - Row 2: Staff Status */}
+      <div className="grid gap-4 md:grid-cols-1">
+        {/* Staff Status Card */}
+        <Card style={{ backgroundColor: '#FFFFFF', borderLeftColor: '#8B5A2B' }} className="border-l-4">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-semibold" style={{ color: '#000000' }}>Staff Status</CardTitle>
+              <UserCog className="h-5 w-5" style={{ color: '#8B5A2B' }} />
+            </div>
+            <CardDescription>Workforce summary linked to Staff Management</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-muted-foreground">Total Workers</span>
+              <span className="text-2xl font-bold" style={{ color: '#000000' }}>{analytics?.totalStaff || 0}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+                  On Duty
+                </Badge>
+              </div>
+              <span className="text-xl font-bold text-green-700">{analytics?.onDutyStaff || 0}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-300">
+                  On Leave
+                </Badge>
+              </div>
+              <span className="text-xl font-bold text-orange-700">{analytics?.onLeaveStaff || 0}</span>
+            </div>
+            {/* Progress Bar */}
+            <div className="pt-2">
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-green-600 transition-all duration-500"
+                  style={{
+                    width: `${analytics?.totalStaff ? (analytics.onDutyStaff / analytics.totalStaff) * 100 : 0}%`,
+                  }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1 text-center">
+                {analytics?.totalStaff ? Math.round((analytics.onDutyStaff / analytics.totalStaff) * 100) : 0}% workforce active
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Enhanced Popular Menu Items & Order Statistics */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Enhanced Popular Menu Items */}
+        <Card style={{ backgroundColor: '#FFFFFF' }} className="col-span-1 md:col-span-2">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle style={{ color: '#000000' }}>Popular Menu Items</CardTitle>
+                <CardDescription>Top 5 most ordered items linked to Orders module</CardDescription>
+              </div>
+              <Badge variant="outline" style={{ color: '#8B5A2B', borderColor: '#8B5A2B' }}>
+                Live Updates
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {analytics?.popularItems && analytics.popularItems.length > 0 ? (
+              <div className="space-y-6">
+                {/* Bar Chart */}
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={analytics.popularItems}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fontSize: 12 }}
+                      angle={-15}
+                      textAnchor="end"
+                      height={80}
+                    />
+                    <YAxis tick={{ fontSize: 12 }} />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#fff', 
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px'
+                      }}
+                      formatter={(value: any, name: string) => {
+                        if (name === 'count') return [value, 'Orders'];
+                        return [value, name];
+                      }}
+                    />
+                    <Bar dataKey="count" fill="#8B5A2B" radius={[8, 8, 0, 0]}>
+                      {analytics.popularItems.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={`hsl(${30 - index * 5}, 50%, ${45 + index * 5}%)`} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+
+                {/* Detailed Table */}
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead style={{ backgroundColor: '#F7F3EE' }}>
+                      <tr>
+                        <th className="text-left p-3 text-sm font-semibold" style={{ color: '#000000' }}>Item Name</th>
+                        <th className="text-center p-3 text-sm font-semibold" style={{ color: '#000000' }}>Orders</th>
+                        <th className="text-center p-3 text-sm font-semibold" style={{ color: '#000000' }}>Revenue</th>
+                        <th className="text-center p-3 text-sm font-semibold" style={{ color: '#000000' }}>Avg Prep Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {analytics.popularItems.map((item, index) => (
+                        <tr key={index} className="border-t hover:bg-gray-50 transition-colors">
+                          <td className="p-3">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-sm" style={{ color: '#000000' }}>
+                                {index + 1}. {item.name}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <Badge variant="outline" className="font-semibold">
+                              {item.count}
+                            </Badge>
+                          </td>
+                          <td className="p-3 text-center font-semibold" style={{ color: '#8B5A2B' }}>
+                            ₹{(item.revenue ?? 0).toFixed(2)}
+                          </td>
+                          <td className="p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                              <Clock className="h-3 w-3" />
+                              {item.avgPrepTime} min
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Package className="h-12 w-12 mb-2" />
+                <p>No orders yet. Popular items will appear here.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Order Statistics */}
+        <Card style={{ backgroundColor: '#FFFFFF' }}>
+          <CardHeader>
+            <CardTitle style={{ color: '#000000' }}>Order Statistics</CardTitle>
+            <CardDescription>Overview of order processing</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Total Orders</span>
+              <span className="text-2xl font-bold" style={{ color: '#000000' }}>{analytics?.totalOrders || 0}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Completed</span>
+              <span className="text-2xl font-bold text-green-600">{analytics?.completedOrders || 0}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">In Progress</span>
+              <span className="text-2xl font-bold text-blue-600">{analytics?.activeOrders || 0}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-green-600 transition-all duration-500"
+                style={{
+                  width: `${analytics?.totalOrders ? (analytics.completedOrders / analytics.totalOrders) * 100 : 0}%`,
+                }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              {analytics?.totalOrders ? Math.round((analytics.completedOrders / analytics.totalOrders) * 100) : 0}% completion rate
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

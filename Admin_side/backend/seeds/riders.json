@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Rajesh Kumar",
+    "phone": "+91-9876543210",
+    "email": "rajesh.kumar@delivery.com",
+    "status": "Available",
+    "vehicleNumber": "MH-01-AB-1234",
+    "vehicleType": "Bike",
+    "rating": 4.8,
+    "totalDeliveries": 1250,
+    "completedToday": 12,
+    "currentOrderId": null,
+    "averageDeliveryTime": 28
+  },
+  {
+    "name": "Priya Sharma",
+    "phone": "+91-9988776655",
+    "email": "priya.sharma@delivery.com",
+    "status": "Available",
+    "vehicleNumber": "MH-02-CD-5678",
+    "vehicleType": "Bike",
+    "rating": 4.9,
+    "totalDeliveries": 1450,
+    "completedToday": 14,
+    "currentOrderId": null,
+    "averageDeliveryTime": 26
+  },
+  {
+    "name": "Arjun Singh",
+    "phone": "+91-8765432109",
+    "email": "arjun.singh@delivery.com",
+    "status": "Available",
+    "vehicleNumber": "MH-03-EF-9012",
+    "vehicleType": "Bike",
+    "rating": 4.7,
+    "totalDeliveries": 980,
+    "completedToday": 8,
+    "currentOrderId": null,
+    "averageDeliveryTime": 32
+  },
+  {
+    "name": "Sneha Gupta",
+    "phone": "+91-7654321098",
+    "email": "sneha.gupta@delivery.com",
+    "status": "On Delivery",
+    "vehicleNumber": "MH-04-GH-3456",
+    "vehicleType": "Bike",
+    "rating": 4.6,
+    "totalDeliveries": 850,
+    "completedToday": 10,
+    "currentOrderId": null,
+    "averageDeliveryTime": 30
+  },
+  {
+    "name": "Vikram Malhotra",
+    "phone": "+91-9123456789",
+    "email": "vikram.malhotra@delivery.com",
+    "status": "Offline",
+    "vehicleNumber": "MH-05-IJ-7890",
+    "vehicleType": "Bike",
+    "rating": 4.5,
+    "totalDeliveries": 1100,
+    "completedToday": 0,
+    "currentOrderId": null,
+    "averageDeliveryTime": 29
+  }
+]

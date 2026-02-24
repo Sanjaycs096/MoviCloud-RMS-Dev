@@ -1,0 +1,45 @@
+# Render Blueprint for Restaurant Management System
+# Deploy both backend and frontend
+
+services:
+  # FastAPI Backend
+  - type: web
+    name: rms-backend
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    envVars:
+      - key: MONGODB_URI
+        sync: false  # You'll set this in Render dashboard
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    healthCheckPath: /api/settings
+    autoDeploy: true
+
+  # React Frontend (Static Site)
+  - type: web
+    name: rms-frontend
+    runtime: static
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    rootDir: frontend
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: rms-backend
+          type: web
+          property: url
+        value: /api  # Fallback - will be overridden by fromService url + /api
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=31536000
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    autoDeploy: true

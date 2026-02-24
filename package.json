@@ -1,0 +1,9 @@
+{
+  "name": "movicloud-rms",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm --prefix User_side run dev",
+    "start": "npm --prefix User_side run dev"
+  }
+}

@@ -1,0 +1,3 @@
+# Root requirements - redirects to backend
+# For proper deployment, use Blueprint or set rootDir to 'backend' in Render
+-r backend/requirements.txt

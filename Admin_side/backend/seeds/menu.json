@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Chicken Tikka Masala",
+    "category": "Curries",
+    "price": 320,
+    "description": "Tender chicken in a creamy tomato-based sauce",
+    "image": "chicken-tikka-masala.jpg",
+    "isAvailable": true,
+    "preparationTime": 25
+  },
+  {
+    "name": "Butter Chicken",
+    "category": "Curries",
+    "price": 340,
+    "description": "Succulent chicken in a rich butter and cream sauce",
+    "image": "butter-chicken.jpg",
+    "isAvailable": true,
+    "preparationTime": 22
+  },
+  {
+    "name": "Paneer Tikka",
+    "category": "Appetizers",
+    "price": 280,
+    "description": "Grilled cottage cheese cubes with spices",
+    "image": "paneer-tikka.jpg",
+    "isAvailable": true,
+    "preparationTime": 15
+  },
+  {
+    "name": "Veg Biryani",
+    "category": "Rice",
+    "price": 250,
+    "description": "Fragrant rice with mixed vegetables and aromatic spices",
+    "image": "veg-biryani.jpg",
+    "isAvailable": true,
+    "preparationTime": 20
+  },
+  {
+    "name": "Naan",
+    "category": "Breads",
+    "price": 60,
+    "description": "Traditional Indian flatbread baked in clay oven",
+    "image": "naan.jpg",
+    "isAvailable": true,
+    "preparationTime": 5
+  },
+  {
+    "name": "Dosa",
+    "category": "South Indian",
+    "price": 120,
+    "description": "Crispy crepe made with rice and lentil batter",
+    "image": "dosa.jpg",
+    "isAvailable": true,
+    "preparationTime": 12
+  }
+]
