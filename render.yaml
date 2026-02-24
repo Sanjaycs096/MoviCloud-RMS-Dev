@@ -58,17 +58,13 @@ services:
   - type: web
     name: rms-user-frontend
     runtime: static
-    region: oregon
     plan: free
     rootDir: User_side
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
-        fromService:
-          name: rms-user-api
-          type: web
-          property: url
+        sync: false     # Set to: https://<rms-user-api>.onrender.com  (after backends deploy)
     headers:
       - path: /assets/*
         name: Cache-Control
@@ -86,17 +82,13 @@ services:
   - type: web
     name: rms-admin-frontend
     runtime: static
-    region: oregon
     plan: free
     rootDir: Admin_side/frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        fromService:
-          name: rms-admin-api
-          type: web
-          property: url
+        sync: false     # Set to: https://<rms-admin-api>.onrender.com/api  (after backends deploy)
     headers:
       - path: /assets/*
         name: Cache-Control
