@@ -67,7 +67,7 @@ interface KDSProductionQueueProps {
 
 // Get station for an item based on name patterns and categories
 const getItemStation = (itemName: string): StationType => {
-  if (!itemName) return "CURRY'; // Default if name is undefined
+  if (!itemName) return "CURRY"; // Default if name is undefined
   const name = itemName.toLowerCase();
   
   // FRY Station - fried items, dosa, samosa, pakora, vada
