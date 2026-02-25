@@ -5,9 +5,7 @@
 #   2. rms-frontend  -- Unified React static site (User + Admin in one Vite build)
 #
 # After first deploy set in Render dashboard:
-#   rms-backend  -> MONGODB_URI        = mongodb+srv://...
-#   rms-frontend -> VITE_API_BASE_URL  = https://<rms-backend>.onrender.com
-#   rms-frontend -> VITE_API_URL       = https://<rms-backend>.onrender.com/api/admin
+#   rms-backend  -> MONGODB_URI  = mongodb+srv://...
 # -----------------------------------------------------------------------------
 
 services:
@@ -44,9 +42,9 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
-        sync: false
+        value: https://rms-backend.onrender.com
       - key: VITE_API_URL
-        sync: false
+        value: https://rms-backend.onrender.com/api/admin
     headers:
       - path: /assets/*
         name: Cache-Control
