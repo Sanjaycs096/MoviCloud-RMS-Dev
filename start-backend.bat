@@ -4,7 +4,7 @@ echo   MOVICLOUD RMS - Starting Backend
 echo ========================================
 echo.
 
-cd /d "%~dp0Admin_side\backend"
+cd /d "%~dp0backend"
 
 echo Checking for Python virtual environment...
 if not exist "venv\" (
@@ -30,18 +30,19 @@ pip install -r requirements.txt
 
 echo.
 echo ========================================
-echo   Starting FastAPI Backend Server...
+echo   Starting Unified Backend Server...
 echo ========================================
 echo.
-echo API will be available at:
-echo http://localhost:8000
+echo User API (Flask) will be available at:
+echo http://127.0.0.1:5000/api
 echo.
-echo API Documentation:
-echo http://localhost:8000/docs
+echo Admin API (FastAPI) will be available at:
+echo http://127.0.0.1:8000/api/admin
+echo http://127.0.0.1:8000/api/admin/docs
 echo.
 echo Press Ctrl+C to stop the server
 echo.
 
-py -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+py -m uvicorn server:app --reload --host 127.0.0.1 --port 8000
 
 pause

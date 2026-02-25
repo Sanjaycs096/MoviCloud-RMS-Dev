@@ -5,33 +5,44 @@ echo  =============================================
 echo   MOVICLOUD RMS - Starting All Services
 echo  =============================================
 echo.
-echo  All 4 services start with ONE command:
+echo  Starting unified backend and frontend:
 echo.
-echo   user frontend  -^> http://localhost:5174
-echo   admin frontend -^> http://localhost:5175  (served at /admin)
-echo   user backend   -^> http://127.0.0.1:5000
-echo   admin backend  -^> http://127.0.0.1:8000
+echo   Frontend: http://localhost:5174
+echo   Backend:  http://127.0.0.1:8000
 echo.
-echo  Open your browser at: http://localhost:5174
+echo   User App:  http://localhost:5174/
+echo   Admin App: http://localhost:5174/admin
+echo.
+echo   User API:  http://127.0.0.1:8000/api
+echo   Admin API: http://127.0.0.1:8000/api/admin
 echo  =============================================
 echo.
 
-cd /d "%~dp0"
-npm run dev
+echo Starting backend in new window...
+start "MOVICLOUD RMS - Backend" cmd /k "%~dp0start-backend.bat"
 
-pause
+echo Waiting 5 seconds for backend to start...
+timeout /t 5 /nobreak >nul
 
-echo Backend:  http://localhost:8000
-echo Frontend: http://localhost:5173
+echo Starting frontend in new window...
+start "MOVICLOUD RMS - Frontend" cmd /k "%~dp0start-frontend.bat"
+
 echo.
-echo Two new windows have been opened:
-echo   1. Backend (FastAPI) - Admin API
-echo   2. Frontend (Vite) - User Interface
+echo =============================================
+echo Two windows have been opened:
+echo   1. Backend (Unified Starlette/Flask/FastAPI)
+echo   2. Frontend (Vite - User + Admin)
 echo.
 echo Keep both windows open while using the application.
-echo Close the windows or press Ctrl+C in each to stop the servers.
+echo Close the windows or press Ctrl+C in each to stop.
 echo.
-echo This window can be closed.
+echo Your browser will open at: http://localhost:5174
 echo.
+echo This window can be closed now.
+echo =============================================
+echo.
+
+timeout /t 3 /nobreak >nul
+start http://localhost:5174
 
 pause

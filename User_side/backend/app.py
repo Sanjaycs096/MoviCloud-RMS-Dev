@@ -40,7 +40,15 @@ def create_app() -> Flask:
 
     cors_origins = os.getenv("CORS_ORIGINS", "*")
     origins = "*" if cors_origins.strip() == "*" else [o.strip() for o in cors_origins.split(",") if o.strip()]
-    CORS(app, resources={rf"{api_prefix}/*": {"origins": origins}})
+    
+    # Apply CORS to all routes with credentials support
+    CORS(
+        app, 
+        resources={r"/*": {"origins": origins}},
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization"],
+        methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+    )
 
     db.init_app(app)
 
