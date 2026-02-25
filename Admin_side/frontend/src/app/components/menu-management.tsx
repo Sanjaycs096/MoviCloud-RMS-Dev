@@ -315,7 +315,7 @@ useEffect(() => {
     const categoryMatch = activeCategory === "all" || i.category === activeCategory;
     const dietMatch = activeDiet === "all" || i.dietType === activeDiet;
     const offerMatch = !filterByOffer || (i.offerDiscount && i.offerDiscount.trim() !== "");
-    const chefSpecialMatch = !filterByChefSpecial || i.badges?.includes('CHEF'S SPECIAL");
+    const chefSpecialMatch = !filterByChefSpecial || i.badges?.includes("CHEF'S SPECIAL");
     return searchMatch && cuisineMatch && categoryMatch && dietMatch && offerMatch && chefSpecialMatch;
   });
 
