@@ -1,92 +1,52 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# Render Blueprint — MOVICLOUD Restaurant Management System
-# 4 services:
-#   1. user-api      Flask backend  (User_side/backend)
-#   2. admin-api     FastAPI backend (Admin_side/backend)
-#   3. user-frontend React static site (User_side)
-#   4. admin-frontend React static site (Admin_side/frontend)
+# -----------------------------------------------------------------------------
+# Render Blueprint -- MOVICLOUD RMS  (2 services)
 #
-# Before deploying, set these env vars in the Render dashboard:
-#   MONGODB_URI         — your MongoDB Atlas connection string (both backends)
-#   CORS_EXTRA_ORIGINS  — comma-separated list of your deployed frontend URLs
-#                         e.g. https://rms-user.onrender.com,https://rms-admin.onrender.com
-# ─────────────────────────────────────────────────────────────────────────────
+#   1. rms-backend   -- Unified Python backend  (Flask + FastAPI via Starlette)
+#   2. rms-frontend  -- Unified React static site (User + Admin in one Vite build)
+#
+# After first deploy set in Render dashboard:
+#   rms-backend  -> MONGODB_URI        = mongodb+srv://...
+#   rms-frontend -> VITE_API_BASE_URL  = https://<rms-backend>.onrender.com
+#   rms-frontend -> VITE_API_URL       = https://<rms-backend>.onrender.com/api/admin
+# -----------------------------------------------------------------------------
 
 services:
 
-  # ── 1. User-side Flask API ──────────────────────────────────────────────────
+  # -- 1. Unified Backend -------------------------------------------------------
   - type: web
-    name: rms-user-api
+    name: rms-backend
     runtime: python
-    region: oregon
     plan: free
-    rootDir: User_side/backend
+    region: oregon
+    rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: "3.11.0"
       - key: MONGODB_URI
-        sync: false          # Set this in the Render dashboard
-      - key: CORS_ORIGINS
-        value: "*"           # Tightened via CORS_EXTRA_ORIGINS in Admin API; Flask API uses * for simplicity
+        sync: false
+      - key: CORS_EXTRA_ORIGINS
+        sync: false
       - key: FLASK_ENV
         value: production
-    healthCheckPath: /api/health
+      - key: API_PREFIX
+        value: ""
+    healthCheckPath: /api/admin/health
     autoDeploy: true
 
-  # ── 2. Admin-side FastAPI ───────────────────────────────────────────────────
+  # -- 2. Unified Frontend ------------------------------------------------------
   - type: web
-    name: rms-admin-api
-    runtime: python
-    region: oregon
-    plan: free
-    rootDir: Admin_side/backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: MONGODB_URI
-        sync: false          # Set this in the Render dashboard
-      - key: CORS_EXTRA_ORIGINS
-        sync: false          # Set to comma-separated deployed frontend URLs
-    healthCheckPath: /api/health
-    autoDeploy: true
-
-  # ── 3. User-side React frontend ─────────────────────────────────────────────
-  - type: web
-    name: rms-user-frontend
+    name: rms-frontend
     runtime: static
     rootDir: User_side
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
-        sync: false     # Set to: https://<rms-user-api>.onrender.com  (after backends deploy)
-    headers:
-      - path: /assets/*
-        name: Cache-Control
-        value: public, max-age=31536000, immutable
-      - path: /*
-        name: Cache-Control
-        value: no-cache
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    autoDeploy: true
-
-  # ── 4. Admin-side React frontend ────────────────────────────────────────────
-  - type: web
-    name: rms-admin-frontend
-    runtime: static
-    rootDir: Admin_side/frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    envVars:
+        sync: false
       - key: VITE_API_URL
-        sync: false     # Set to: https://<rms-admin-api>.onrender.com/api  (after backends deploy)
+        sync: false
     headers:
       - path: /assets/*
         name: Cache-Control
