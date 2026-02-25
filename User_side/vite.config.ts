@@ -21,6 +21,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@admin': path.resolve(__dirname, '../Admin_side/frontend/src'),
     },
   },
   optimizeDeps: {
