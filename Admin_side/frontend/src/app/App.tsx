@@ -46,9 +46,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@admin/app/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from '@admin/app/components/ui/avatar";
-import { Badge } from '@admin/app/components/ui/badge";
+} from '@admin/app/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@admin/app/components/ui/avatar';
+import { Badge } from '@admin/app/components/ui/badge';
 
 import { AdminChatBox } from '@admin/app/components/AdminChatBox';
 

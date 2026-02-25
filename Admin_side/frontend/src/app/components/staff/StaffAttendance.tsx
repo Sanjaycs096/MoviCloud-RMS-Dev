@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@admin/app/components/ui/card";
-import { Button } from '@admin/app/components/ui/button";
-import { Input } from '@admin/app/components/ui/input";
-import { Badge } from '@admin/app/components/ui/badge";
+import { Card, CardContent } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Badge } from '@admin/app/components/ui/badge';
 import { 
   Select, 
   SelectContent, 
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from '@admin/app/components/ui/select";
+} from '@admin/app/components/ui/select';
 import { 
   Dialog,
   DialogContent,
@@ -17,8 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@admin/app/components/ui/dialog";
-import { Label } from '@admin/app/components/ui/label";
+} from '@admin/app/components/ui/dialog';
+import { Label } from '@admin/app/components/ui/label';
 import { 
   Search, 
   FileDown, 

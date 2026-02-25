@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@admin/app/components/ui/card";
-import { Button } from '@admin/app/components/ui/button";
-import { Input } from '@admin/app/components/ui/input";
-import { Badge } from '@admin/app/components/ui/badge";
-import { Checkbox } from '@admin/app/components/ui/checkbox";
+import { Card, CardContent } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Checkbox } from '@admin/app/components/ui/checkbox';
 import { 
   Dialog,
   DialogContent,
@@ -11,15 +11,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@admin/app/components/ui/dialog";
-import { Label } from '@admin/app/components/ui/label";
+} from '@admin/app/components/ui/dialog';
+import { Label } from '@admin/app/components/ui/label';
 import { 
   Select, 
   SelectContent, 
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from '@admin/app/components/ui/select";
+} from '@admin/app/components/ui/select';
 import { Clock, TrendingUp, Info, Loader2, Plus, Pencil, Trash2, DollarSign, CheckCircle } from 'lucide-react';
 import { shiftsApi, staffApi, settingsApi } from '@admin/utils/api';
 import { toast } from 'sonner';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@admin/app/components/ui/card";
-import { Button } from '@admin/app/components/ui/button";
-import { Input } from '@admin/app/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
 import { 
   BarChart, 
   Bar, 

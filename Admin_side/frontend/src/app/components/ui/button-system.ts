@@ -45,7 +45,7 @@ export const modalButtonLayout = {
 };
 
 // Pressed state animation
-export const pressedAnimation = "active:scale-[0.98] active:shadow-inner";
+export const pressedAnimation = "active:scale-[0.98] active:shadow-inner';
 
 // Usage example:
 // <button className={cn(buttonStyles.base, buttonStyles.heights.md, buttonStyles.primary, pressedAnimation)}>

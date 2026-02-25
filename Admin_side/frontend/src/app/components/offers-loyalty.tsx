@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
-import { offersApi } from '@admin/utils/api";
+import { offersApi } from '@admin/utils/api';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@admin/app/components/ui/card";
-import { Button } from '@admin/app/components/ui/button";
-import { Input } from '@admin/app/components/ui/input";
-import { Label } from '@admin/app/components/ui/label";
+} from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@admin/app/components/ui/tabs";
-import { Badge } from '@admin/app/components/ui/badge";
+} from '@admin/app/components/ui/tabs';
+import { Badge } from '@admin/app/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -24,7 +24,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@admin/app/components/ui/table";
+} from '@admin/app/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -33,16 +33,16 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from '@admin/app/components/ui/dialog";
+} from '@admin/app/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@admin/app/components/ui/select";
-import { Separator } from '@admin/app/components/ui/separator";
-import { Switch } from '@admin/app/components/ui/switch";
+} from '@admin/app/components/ui/select';
+import { Separator } from '@admin/app/components/ui/separator';
+import { Switch } from '@admin/app/components/ui/switch';
 import { Slider } from '@admin/app/components/ui/slider";
 import {
   Tag,
@@ -82,7 +82,7 @@ import {
   MessageSquare,
   Heart,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "sonner';
 import { cn } from '@admin/app/components/ui/utils";
 
 interface Coupon {
@@ -1409,7 +1409,7 @@ export function OffersLoyalty() {
               if (!open) resetPlanForm();
             }}
           >
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="sm:max-w-[600px]'>
               <DialogHeader>
                 <DialogTitle>{editingPlan ? 'Edit Membership Plan' : 'Add Membership Plan'}</DialogTitle>
                 <DialogDescription>

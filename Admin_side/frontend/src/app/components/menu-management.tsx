@@ -1,28 +1,28 @@
 import { useEffect, useState } from "react";
-import { Button } from '@admin/app/components/ui/button";
+import { Button } from '@admin/app/components/ui/button';
 import {
   Card,
   CardContent,
-} from '@admin/app/components/ui/card";
-import { Input } from '@admin/app/components/ui/input";
-import { Label } from '@admin/app/components/ui/label";
+} from '@admin/app/components/ui/card';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@admin/app/components/ui/dialog";
+} from '@admin/app/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@admin/app/components/ui/select";
-import { Badge } from '@admin/app/components/ui/badge";
-import { Switch } from '@admin/app/components/ui/switch";
-import { Checkbox } from '@admin/app/components/ui/checkbox";
+} from '@admin/app/components/ui/select';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Switch } from '@admin/app/components/ui/switch';
+import { Checkbox } from '@admin/app/components/ui/checkbox';
 import { cn } from '@admin/app/components/ui/utils";
 import {
   Plus,
@@ -34,7 +34,7 @@ import {
   Flame,
   ChevronRight,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "sonner';
 import { menuApi } from '@admin/utils/api";
 
 type CuisineType = "South Indian" | "North Indian" | "Chinese" | "Italian" | "Continental";
@@ -315,7 +315,7 @@ useEffect(() => {
     const categoryMatch = activeCategory === "all" || i.category === activeCategory;
     const dietMatch = activeDiet === "all" || i.dietType === activeDiet;
     const offerMatch = !filterByOffer || (i.offerDiscount && i.offerDiscount.trim() !== "");
-    const chefSpecialMatch = !filterByChefSpecial || i.badges?.includes("CHEF'S SPECIAL");
+    const chefSpecialMatch = !filterByChefSpecial || i.badges?.includes('CHEF'S SPECIAL");
     return searchMatch && cuisineMatch && categoryMatch && dietMatch && offerMatch && chefSpecialMatch;
   });
 

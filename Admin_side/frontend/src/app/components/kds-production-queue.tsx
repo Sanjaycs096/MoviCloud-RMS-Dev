@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Button } from '@admin/app/components/ui/button";
-import { Card, CardContent, CardHeader } from '@admin/app/components/ui/card";
-import { Badge } from '@admin/app/components/ui/badge";
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent, CardHeader } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
 import { cn } from '@admin/app/components/ui/utils";
 import {
   Clock,
@@ -28,7 +28,7 @@ import {
   Target,
   TrendingUp,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "sonner';
 import { ordersApi } from '@admin/utils/api";
 
 type OrderStatus = "NEW" | "COOKING" | "READY" | "DELIVERED";
@@ -67,7 +67,7 @@ interface KDSProductionQueueProps {
 
 // Get station for an item based on name patterns and categories
 const getItemStation = (itemName: string): StationType => {
-  if (!itemName) return "CURRY"; // Default if name is undefined
+  if (!itemName) return "CURRY'; // Default if name is undefined
   const name = itemName.toLowerCase();
   
   // FRY Station - fried items, dosa, samosa, pakora, vada

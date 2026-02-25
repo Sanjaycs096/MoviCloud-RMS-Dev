@@ -21,7 +21,7 @@ import {
   FileBarChart,
   Filter,
 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@admin/app/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from '@admin/app/components/ui/avatar';
 import { cn } from '@admin/app/components/ui/utils';
 import { useAuth } from '@admin/utils/auth-context';
 

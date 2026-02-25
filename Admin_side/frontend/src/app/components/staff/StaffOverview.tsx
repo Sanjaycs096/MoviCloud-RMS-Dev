@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@admin/app/components/ui/card";
-import { Badge } from '@admin/app/components/ui/badge";
-import { Button } from '@admin/app/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Button } from '@admin/app/components/ui/button';
 import { 
   LineChart, 
   Line, 

@@ -42,13 +42,13 @@ import { Input } from '@admin/app/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
 import { Badge } from '@admin/app/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@admin/app/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@admin/app/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@admin/app/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
-import { Progress } from '@admin/app/components/ui/progress";
-import { Avatar, AvatarFallback } from '@admin/app/components/ui/avatar";
-import { Separator } from '@admin/app/components/ui/separator";
-import { Label } from '@admin/app/components/ui/label";
+import { Progress } from '@admin/app/components/ui/progress';
+import { Avatar, AvatarFallback } from '@admin/app/components/ui/avatar';
+import { Separator } from '@admin/app/components/ui/separator';
+import { Label } from '@admin/app/components/ui/label';
 import { cn } from '@admin/app/components/ui/utils';
 import { toast } from 'sonner';
 import { inventoryApi } from '@admin/utils/api';
@@ -918,4 +918,4 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@admin/app/components/ui/dropdown-menu";
+} from '@admin/app/components/ui/dropdown-menu';
