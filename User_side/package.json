@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build": "vite build",
+    "build": "npm install --prefix ../Admin_side/frontend && vite build",
     "dev": "concurrently --kill-others-on-fail --names \"user,admin,user-api,admin-api\" --prefix-colors \"cyan.bold,magenta.bold,green.bold,yellow.bold\" \"npm run start:user\" \"npm run start:admin\" \"npm run start:user-api\" \"npm run start:admin-api\"",
     "start:user": "vite --port 5174",
     "start:admin": "npm --prefix ../Admin_side/frontend run dev -- --port 5175",
