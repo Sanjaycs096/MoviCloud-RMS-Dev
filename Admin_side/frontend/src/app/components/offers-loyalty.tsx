@@ -82,7 +82,7 @@ import {
   MessageSquare,
   Heart,
 } from "lucide-react";
-import { toast } from "sonner';
+import { toast } from 'sonner';
 import { cn } from '@admin/app/components/ui/utils';
 
 interface Coupon {

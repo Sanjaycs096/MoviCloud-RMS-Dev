@@ -28,7 +28,7 @@ import {
   Target,
   TrendingUp,
 } from "lucide-react";
-import { toast } from "sonner';
+import { toast } from 'sonner';
 import { ordersApi } from '@admin/utils/api';
 
 type OrderStatus = "NEW" | "COOKING" | "READY" | "DELIVERED";

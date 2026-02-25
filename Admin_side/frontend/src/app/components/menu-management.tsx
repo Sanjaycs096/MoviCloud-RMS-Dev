@@ -34,7 +34,7 @@ import {
   Flame,
   ChevronRight,
 } from "lucide-react";
-import { toast } from "sonner';
+import { toast } from 'sonner';
 import { menuApi } from '@admin/utils/api';
 
 type CuisineType = "South Indian" | "North Indian" | "Chinese" | "Italian" | "Continental";
