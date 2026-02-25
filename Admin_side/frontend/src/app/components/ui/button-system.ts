@@ -1,7 +1,7 @@
 // Centralized Button System with All States
 // Import this in components that need consistent button behavior
 
-import { cn } from '@admin/app/components/ui/utils";
+import { cn } from '@admin/app/components/ui/utils';
 
 export const buttonStyles = {
   // Base button styles with all states

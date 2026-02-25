@@ -43,7 +43,7 @@ import {
 } from '@admin/app/components/ui/select';
 import { Separator } from '@admin/app/components/ui/separator';
 import { Switch } from '@admin/app/components/ui/switch';
-import { Slider } from '@admin/app/components/ui/slider";
+import { Slider } from '@admin/app/components/ui/slider';
 import {
   Tag,
   Percent,
@@ -83,7 +83,7 @@ import {
   Heart,
 } from "lucide-react";
 import { toast } from "sonner';
-import { cn } from '@admin/app/components/ui/utils";
+import { cn } from '@admin/app/components/ui/utils';
 
 interface Coupon {
   id: string;

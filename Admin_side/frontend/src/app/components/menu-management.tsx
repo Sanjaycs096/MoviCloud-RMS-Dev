@@ -23,7 +23,7 @@ import {
 import { Badge } from '@admin/app/components/ui/badge';
 import { Switch } from '@admin/app/components/ui/switch';
 import { Checkbox } from '@admin/app/components/ui/checkbox';
-import { cn } from '@admin/app/components/ui/utils";
+import { cn } from '@admin/app/components/ui/utils';
 import {
   Plus,
   Edit,
@@ -35,7 +35,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner';
-import { menuApi } from '@admin/utils/api";
+import { menuApi } from '@admin/utils/api';
 
 type CuisineType = "South Indian" | "North Indian" | "Chinese" | "Italian" | "Continental";
 
