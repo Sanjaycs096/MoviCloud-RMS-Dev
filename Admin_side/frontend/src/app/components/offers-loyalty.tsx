@@ -1409,7 +1409,7 @@ export function OffersLoyalty() {
               if (!open) resetPlanForm();
             }}
           >
-            <DialogContent className="sm:max-w-[600px]'>
+            <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
                 <DialogTitle>{editingPlan ? 'Edit Membership Plan' : 'Add Membership Plan'}</DialogTitle>
                 <DialogDescription>
