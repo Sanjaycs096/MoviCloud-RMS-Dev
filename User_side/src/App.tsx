@@ -3,6 +3,7 @@ import { BrowserRouter, useLocation } from "react-router-dom";
 import FigmaApp from "@/app/App";
 import { LoyaltyProvider } from "@/app/context/LoyaltyContext";
 import { NotificationsProvider } from "@/context/NotificationsContext";
+import { AuthManager } from "@/utils/auth-manager";
 
 // Lazy-load the entire Admin app (+ its CSS) so it only downloads when needed
 const AdminApp = lazy(() => import("@/admin/index"));
@@ -31,11 +32,13 @@ function AppRouter() {
   }
 
   return (
-    <LoyaltyProvider>
-      <NotificationsProvider>
-        <FigmaApp />
-      </NotificationsProvider>
-    </LoyaltyProvider>
+    <AuthManager>
+      <LoyaltyProvider>
+        <NotificationsProvider>
+          <FigmaApp />
+        </NotificationsProvider>
+      </LoyaltyProvider>
+    </AuthManager>
   );
 }
 
