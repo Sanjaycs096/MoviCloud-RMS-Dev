@@ -31,10 +31,11 @@ export default defineConfig({
         find: /^@\//,
         replacement: '',
         customResolver(source: string, importer: string | undefined) {
-          const rel  = source.slice(2) // strip '@/'
+          // NOTE: Vite already applied the regex replacement (@/ → '') before calling
+          // customResolver, so `source` here is already the bare path e.g. "app/App"
           const imp  = (importer ?? '').replace(/\\/g, '/')
           const base = imp.includes('Admin_side') ? ADMIN_SRC : USER_SRC
-          return path.resolve(base, rel)
+          return path.resolve(base, source)
         },
       },
     ],
