@@ -1,0 +1,33 @@
+/*
+ * admin.css — Admin-side styles processed from User_side's node_modules.
+ *
+ * This file replaces a direct import of Admin_side/frontend/src/styles/index.css.
+ * All package imports (tailwindcss, tw-animate-css) resolve from User_side/node_modules.
+ */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+/* Tailwind v4 — package resolved from User_side/node_modules (no Admin_side lookup) */
+@import 'tailwindcss' source(none);
+@source '../../Admin_side/frontend/src/**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';
+
+/* Admin theme/design CSS — imported by relative path, no node_modules needed */
+@import '../../Admin_side/frontend/src/styles/theme.css';
+@import '../../Admin_side/frontend/src/styles/fonts.css';
+@import '../../Admin_side/frontend/src/styles/backgrounds.css';
+
+/* Toast overrides (originally in Admin_side index.css) */
+[data-sonner-toaster] { z-index: 9999 !important; }
+
+[data-sonner-toast] {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,.15), 0 8px 10px -6px rgba(0,0,0,.1) !important;
+}
+[data-sonner-toast][data-type="success"] { background: #f0fdf4 !important; border-color: #86efac !important; }
+[data-sonner-toast][data-type="error"]   { background: #fef2f2 !important; border-color: #fca5a5 !important; }
+[data-sonner-toast][data-type="info"]    { background: #eff6ff !important; border-color: #93c5fd !important; }
+[data-sonner-toast][data-type="warning"] { background: #fffbeb !important; border-color: #fcd34d !important; }
