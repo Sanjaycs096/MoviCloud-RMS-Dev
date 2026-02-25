@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Badge } from '@admin/app/components/ui/badge';
 import { 
   Shield, 
   Users, 
@@ -12,15 +12,15 @@ import {
   Lock,
   Settings,
 } from 'lucide-react';
-import { cn } from '@/app/components/ui/utils';
+import { cn } from '@admin/app/components/ui/utils';
 
 // Import sub-components
-import { AccountAuthentication } from '@/app/components/settings/account-authentication';
-import { RoleBasedAccessControl } from '@/app/components/settings/role-based-access-control';
-import { AuditLogs } from '@/app/components/settings/audit-logs';
-import { SystemConfiguration } from '@/app/components/settings/system-configuration';
-import { TaxServiceSettings } from '@/app/components/settings/tax-service-settings';
-import { BackupRecovery } from '@/app/components/settings/backup-recovery';
+import { AccountAuthentication } from '@admin/app/components/settings/account-authentication';
+import { RoleBasedAccessControl } from '@admin/app/components/settings/role-based-access-control';
+import { AuditLogs } from '@admin/app/components/settings/audit-logs';
+import { SystemConfiguration } from '@admin/app/components/settings/system-configuration';
+import { TaxServiceSettings } from '@admin/app/components/settings/tax-service-settings';
+import { BackupRecovery } from '@admin/app/components/settings/backup-recovery';
 
 type SettingsSection = 
   | 'account' 

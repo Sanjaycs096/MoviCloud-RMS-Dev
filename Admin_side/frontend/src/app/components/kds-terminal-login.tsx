@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { cn } from '@/app/components/ui/utils';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { cn } from '@admin/app/components/ui/utils';
 import {
   ChefHat,
   Flame,

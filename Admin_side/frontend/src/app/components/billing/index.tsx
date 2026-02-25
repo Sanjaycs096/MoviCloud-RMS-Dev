@@ -5,7 +5,7 @@ import {
   RotateCcw,
   CalendarCheck
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
 import { BillingPayment } from './billing-payment';
 import { SeatBooking } from './SeatBooking';
 import { RefundManagement } from './RefundManagement';

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Label } from '@/app/components/ui/label';
-import { Switch } from '@/app/components/ui/switch';
-import { Separator } from '@/app/components/ui/separator';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Label } from '@admin/app/components/ui/label';
+import { Switch } from '@admin/app/components/ui/switch';
+import { Separator } from '@admin/app/components/ui/separator';
 import { Bell, Save, Mail, MessageSquare, Volume2, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
 

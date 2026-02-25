@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { toast } from 'sonner';
-import { API_BASE_URL } from '@/utils/supabase/info';
+import { API_BASE_URL } from '@admin/utils/supabase/info';
 
 // ==================== DATA ENTITIES ====================
 

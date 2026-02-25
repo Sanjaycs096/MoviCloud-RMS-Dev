@@ -1,5 +1,5 @@
-import { Badge } from '@/app/components/ui/badge';
-import { cn } from '@/app/components/ui/utils';
+import { Badge } from '@admin/app/components/ui/badge';
+import { cn } from '@admin/app/components/ui/utils';
 
 interface LiveDataIndicatorProps {
   variant?: 'dashboard' | 'reports' | 'kitchen' | 'orders';

@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/app/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Input } from '@/app/components/ui/input';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
-import { LoadingOrders } from '@/app/components/ui/loading-spinner';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@admin/app/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Input } from '@admin/app/components/ui/input';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
+import { LoadingOrders } from '@admin/app/components/ui/loading-spinner';
 import { Clock, Package, CheckCircle, XCircle, CreditCard, Eye, IndianRupee, UtensilsCrossed, Zap, Search, Repeat, AlertCircle, TrendingUp, Activity, Timer, Undo2, Gauge, MoveRight, Ban, Sparkles, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { PaymentDialog } from '@/app/components/billing/payment-dialog';
-import { QuickOrderPOS } from '@/app/components/quick-order-pos';
+import { PaymentDialog } from '@admin/app/components/billing/payment-dialog';
+import { QuickOrderPOS } from '@admin/app/components/quick-order-pos';
 import { Order, MenuItem } from './types';
 import { SMART_NOTE_KEYWORDS } from './constants';
 import { 
@@ -23,8 +23,8 @@ import {
   parseSmartNotes,
   getKitchenLoad 
 } from './utils';
-import { ordersApi, menuApi } from '@/utils/api';
-import { useAuth } from '@/utils/auth-context';
+import { ordersApi, menuApi } from '@admin/utils/api';
+import { useAuth } from '@admin/utils/auth-context';
 
 // Animated Counter Component for count-up effect
 function AnimatedCounter({ value, className = '' }: { value: number; className?: string }) {

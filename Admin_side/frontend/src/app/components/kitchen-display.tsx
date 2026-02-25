@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Badge } from '@admin/app/components/ui/badge';
 import { Clock, ChefHat, AlertCircle, Package } from 'lucide-react';
-import { ordersApi, recipesApi } from '@/utils/api';
+import { ordersApi, recipesApi } from '@admin/utils/api';
 import { toast } from 'sonner';
 
 interface Order {

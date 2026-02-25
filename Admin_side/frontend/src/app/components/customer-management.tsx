@@ -19,21 +19,21 @@ import {
   User,
   FileText
 } from 'lucide-react';
-import { cn } from '@/app/components/ui/utils';
+import { cn } from '@admin/app/components/ui/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
-import { Badge } from '@/app/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/app/components/ui/avatar';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/app/components/ui/sheet';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { Separator } from '@/app/components/ui/separator';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@admin/app/components/ui/table';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@admin/app/components/ui/avatar';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@admin/app/components/ui/sheet';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@admin/app/components/ui/dropdown-menu';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { Separator } from '@admin/app/components/ui/separator';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
 import { toast } from 'sonner';
 
 // --- Types ---

@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { Badge } from '@/app/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/app/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/app/components/ui/radio-group';
-import { Separator } from '@/app/components/ui/separator';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@admin/app/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@admin/app/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@admin/app/components/ui/radio-group';
+import { Separator } from '@admin/app/components/ui/separator';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
 import { 
   CreditCard, 
   Wallet, 
@@ -34,8 +34,8 @@ import {
   Calculator,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { API_BASE_URL } from '@/utils/supabase/info';
-import { mockApi } from '@/app/services/mock-api';
+import { API_BASE_URL } from '@admin/utils/supabase/info';
+import { mockApi } from '@admin/app/services/mock-api';
 
 interface Order {
   id: string;

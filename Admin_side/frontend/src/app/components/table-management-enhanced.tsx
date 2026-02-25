@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTableStore, WAITER_ROSTER, TableStatus, TableEntity } from '@/app/contexts/table-store';
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
+import { useTableStore, WAITER_ROSTER, TableStatus, TableEntity } from '@admin/app/contexts/table-store';
+import { Card, CardContent, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Badge } from '@admin/app/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -11,16 +11,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/app/components/ui/dialog';
+} from '@admin/app/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/app/components/ui/select';
-import { Label } from '@/app/components/ui/label';
-import { Input } from '@/app/components/ui/input';
+} from '@admin/app/components/ui/select';
+import { Label } from '@admin/app/components/ui/label';
+import { Input } from '@admin/app/components/ui/input';
 import { 
   Users, 
   UserPlus, 
@@ -37,7 +37,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { cn } from '@/app/components/ui/utils';
+import { cn } from '@admin/app/components/ui/utils';
 
 // ==================== TIME SLOTS ====================
 

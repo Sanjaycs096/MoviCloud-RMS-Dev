@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/app/components/ui/dialog';
-import { Label } from '@/app/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/app/components/ui/radio-group';
+import { Button } from '@admin/app/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@admin/app/components/ui/dialog';
+import { Label } from '@admin/app/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@admin/app/components/ui/radio-group';
 import { CreditCard, Banknote, Smartphone, Wallet } from 'lucide-react';
-import { API_BASE_URL } from '@/utils/supabase/info';
+import { API_BASE_URL } from '@admin/utils/supabase/info';
 import { toast } from 'sonner';
 
 interface PaymentDialogProps {

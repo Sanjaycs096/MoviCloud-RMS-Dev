@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Label } from '@/app/components/ui/label';
-import { Badge } from '@/app/components/ui/badge';
-import { Switch } from '@/app/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
-import { Separator } from '@/app/components/ui/separator';
-import { Input } from '@/app/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Label } from '@admin/app/components/ui/label';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Switch } from '@admin/app/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@admin/app/components/ui/table';
+import { Separator } from '@admin/app/components/ui/separator';
+import { Input } from '@admin/app/components/ui/input';
 import { Database, Download, Upload, RefreshCcw, Check, AlertCircle, Calendar, Clock, Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { backupApi } from '@/utils/api';
+import { backupApi } from '@admin/utils/api';
 
 // Local storage keys
 const BACKUPS_STORAGE_KEY = 'rms_backups';

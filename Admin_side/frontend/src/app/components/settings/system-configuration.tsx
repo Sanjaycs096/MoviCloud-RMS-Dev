@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Separator } from '@/app/components/ui/separator';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Separator } from '@admin/app/components/ui/separator';
 import { Wrench, Save, Upload, MapPin, Phone, Globe, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { systemConfigApi } from '@/utils/api';
+import { systemConfigApi } from '@admin/utils/api';
 
 interface SystemConfig {
   restaurantName: string;

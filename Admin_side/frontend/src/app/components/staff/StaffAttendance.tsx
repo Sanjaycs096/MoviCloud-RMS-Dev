@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from "@/app/components/ui/card";
-import { Button } from "@/app/components/ui/button";
-import { Input } from "@/app/components/ui/input";
-import { Badge } from "@/app/components/ui/badge";
+import { Card, CardContent } from '@admin/app/components/ui/card";
+import { Button } from '@admin/app/components/ui/button";
+import { Input } from '@admin/app/components/ui/input";
+import { Badge } from '@admin/app/components/ui/badge";
 import { 
   Select, 
   SelectContent, 
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from "@/app/components/ui/select";
+} from '@admin/app/components/ui/select";
 import { 
   Dialog,
   DialogContent,
@@ -17,8 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/app/components/ui/dialog";
-import { Label } from "@/app/components/ui/label";
+} from '@admin/app/components/ui/dialog";
+import { Label } from '@admin/app/components/ui/label";
 import { 
   Search, 
   FileDown, 
@@ -32,7 +32,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { motion } from "framer-motion";
-import { attendanceApi, staffApi } from '@/utils/api';
+import { attendanceApi, staffApi } from '@admin/utils/api';
 import { toast } from 'sonner';
 
 interface AttendanceRecord {

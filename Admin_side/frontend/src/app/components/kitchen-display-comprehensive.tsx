@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
-import { Checkbox } from '@/app/components/ui/checkbox';
-import { cn } from '@/app/components/ui/utils';
-import { LoadingKitchen } from '@/app/components/ui/loading-spinner';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
+import { Checkbox } from '@admin/app/components/ui/checkbox';
+import { cn } from '@admin/app/components/ui/utils';
+import { LoadingKitchen } from '@admin/app/components/ui/loading-spinner';
 import {
   ChefHat, Clock, Flame, CheckCircle, Package,
   AlertTriangle, Coffee, Zap, Users, LogOut, Crown
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { ordersApi, tablesApi } from '@/utils/api';
-import { KDSTerminalLogin, type KitchenTerminalStation, TERMINAL_STATIONS } from '@/app/components/kds-terminal-login';
+import { ordersApi, tablesApi } from '@admin/utils/api';
+import { KDSTerminalLogin, type KitchenTerminalStation, TERMINAL_STATIONS } from '@admin/app/components/kds-terminal-login';
 
 // Kitchen Order type matching backend data
 interface KitchenOrder {

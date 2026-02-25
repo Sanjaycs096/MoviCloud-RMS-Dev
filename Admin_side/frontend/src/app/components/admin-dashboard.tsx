@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { IndianRupee, ShoppingCart, TrendingUp, Users, AlertCircle, Activity, Package, ChefHat, UserCog, Clock, Radio } from 'lucide-react';
-import { API_BASE_URL } from '@/utils/supabase/info';
-import { DataSeeder } from '@/app/components/data-seeder';
-import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
-import { LoadingSpinner } from '@/app/components/ui/loading-spinner';
+import { API_BASE_URL } from '@admin/utils/supabase/info';
+import { DataSeeder } from '@admin/app/components/data-seeder';
+import { Alert, AlertDescription, AlertTitle } from '@admin/app/components/ui/alert';
+import { Button } from '@admin/app/components/ui/button';
+import { Badge } from '@admin/app/components/ui/badge';
+import { LoadingSpinner } from '@admin/app/components/ui/loading-spinner';
 
 interface Analytics {
   totalOrders: number;

@@ -37,21 +37,21 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/app/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Progress } from "@/app/components/ui/progress";
-import { Avatar, AvatarFallback } from "@/app/components/ui/avatar";
-import { Separator } from "@/app/components/ui/separator";
-import { Label } from "@/app/components/ui/label";
-import { cn } from '@/app/components/ui/utils';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@admin/app/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@admin/app/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Progress } from '@admin/app/components/ui/progress";
+import { Avatar, AvatarFallback } from '@admin/app/components/ui/avatar";
+import { Separator } from '@admin/app/components/ui/separator";
+import { Label } from '@admin/app/components/ui/label";
+import { cn } from '@admin/app/components/ui/utils';
 import { toast } from 'sonner';
-import { inventoryApi } from '@/utils/api';
+import { inventoryApi } from '@admin/utils/api';
 
 // --- Types ---
 
@@ -918,4 +918,4 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/app/components/ui/dropdown-menu";
+} from '@admin/app/components/ui/dropdown-menu";

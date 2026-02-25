@@ -1,19 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent } from '@/app/components/ui/card';
-import { Label } from '@/app/components/ui/label';
-import { Badge } from '@/app/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/app/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { cn } from '@/app/components/ui/utils';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent } from '@admin/app/components/ui/card';
+import { Label } from '@admin/app/components/ui/label';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@admin/app/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { cn } from '@admin/app/components/ui/utils';
 import { 
   Armchair, Users, Clock, Utensils, Sparkles, CheckCircle,
   UserCheck, AlertCircle, ChefHat, Timer, MapPin, ShoppingCart, ShieldCheck, Lock, UserPlus, X
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { restaurantState, type RestaurantOrder, type OrderStatus } from '@/app/services/restaurant-state';
-import { API_BASE_URL } from '@/utils/supabase/info';
+import { restaurantState, type RestaurantOrder, type OrderStatus } from '@admin/app/services/restaurant-state';
+import { API_BASE_URL } from '@admin/utils/supabase/info';
 
 // ============================================================================
 // TYPE DEFINITIONS

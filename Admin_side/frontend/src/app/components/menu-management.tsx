@@ -1,29 +1,29 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/app/components/ui/button";
+import { Button } from '@admin/app/components/ui/button";
 import {
   Card,
   CardContent,
-} from "@/app/components/ui/card";
-import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+} from '@admin/app/components/ui/card";
+import { Input } from '@admin/app/components/ui/input";
+import { Label } from '@admin/app/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/app/components/ui/dialog";
+} from '@admin/app/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components/ui/select";
-import { Badge } from "@/app/components/ui/badge";
-import { Switch } from "@/app/components/ui/switch";
-import { Checkbox } from "@/app/components/ui/checkbox";
-import { cn } from "@/app/components/ui/utils";
+} from '@admin/app/components/ui/select";
+import { Badge } from '@admin/app/components/ui/badge";
+import { Switch } from '@admin/app/components/ui/switch";
+import { Checkbox } from '@admin/app/components/ui/checkbox";
+import { cn } from '@admin/app/components/ui/utils";
 import {
   Plus,
   Edit,
@@ -35,7 +35,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
-import { menuApi } from "@/utils/api";
+import { menuApi } from '@admin/utils/api";
 
 type CuisineType = "South Indian" | "North Indian" | "Chinese" | "Italian" | "Continental";
 

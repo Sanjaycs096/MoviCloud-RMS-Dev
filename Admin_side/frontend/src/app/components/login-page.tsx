@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useAuth, UserRole } from '@/utils/auth-context';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Alert, AlertDescription } from '@/app/components/ui/alert';
+import { useAuth, UserRole } from '@admin/utils/auth-context';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Alert, AlertDescription } from '@admin/app/components/ui/alert';
 import { UtensilsCrossed, LogIn, Eye, EyeOff, ChefHat, UserCog, CreditCard, Users, Shield, Lock, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 

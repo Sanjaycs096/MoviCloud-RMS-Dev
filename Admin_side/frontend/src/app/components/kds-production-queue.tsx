@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Button } from "@/app/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/app/components/ui/card";
-import { Badge } from "@/app/components/ui/badge";
-import { cn } from "@/app/components/ui/utils";
+import { Button } from '@admin/app/components/ui/button";
+import { Card, CardContent, CardHeader } from '@admin/app/components/ui/card";
+import { Badge } from '@admin/app/components/ui/badge";
+import { cn } from '@admin/app/components/ui/utils";
 import {
   Clock,
   CheckCircle2,
@@ -29,7 +29,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
-import { ordersApi } from "@/utils/api";
+import { ordersApi } from '@admin/utils/api";
 
 type OrderStatus = "NEW" | "COOKING" | "READY" | "DELIVERED";
 type OrderType = "DINE_IN" | "PARCEL";

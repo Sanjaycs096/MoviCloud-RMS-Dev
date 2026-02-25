@@ -1,24 +1,24 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { cn } from '@/app/components/ui/utils';
-import { LoadingTables } from '@/app/components/ui/loading-spinner';
+import { Button } from '@admin/app/components/ui/button';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@admin/app/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { cn } from '@admin/app/components/ui/utils';
+import { LoadingTables } from '@admin/app/components/ui/loading-spinner';
 import {
   Users, Clock, Utensils, Sparkles, CheckCircle, UserPlus,
   AlertCircle, ChefHat, Timer, MapPin, Calendar, X, Coffee, DollarSign,
   Plus, ChevronsRight, Minus
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { tablesApi } from '@/utils/api';
-import { staffApi } from '@/utils/api';
-import { ordersApi } from '@/utils/api';
-import { useAuth } from '@/utils/auth-context';
+import { tablesApi } from '@admin/utils/api';
+import { staffApi } from '@admin/utils/api';
+import { ordersApi } from '@admin/utils/api';
+import { useAuth } from '@admin/utils/auth-context';
 
 // ============================================================================
 // TYPE DEFINITIONS

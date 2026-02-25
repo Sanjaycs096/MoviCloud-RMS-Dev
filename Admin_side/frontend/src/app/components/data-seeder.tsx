@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
 import { Database, RefreshCw } from 'lucide-react';
-import { API_BASE_URL } from '@/utils/supabase/info';
+import { API_BASE_URL } from '@admin/utils/supabase/info';
 import { toast } from 'sonner';
 
 export function DataSeeder() {

@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Switch } from '@/app/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Separator } from '@/app/components/ui/separator';
-import { Badge } from '@/app/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/app/components/ui/dialog';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
+import { Switch } from '@admin/app/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Separator } from '@admin/app/components/ui/separator';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@admin/app/components/ui/dialog';
 import { DollarSign, Save, Plus, Edit, Trash2, Percent, Tag, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { taxConfigApi, discountRulesApi } from '@/utils/api';
+import { taxConfigApi, discountRulesApi } from '@admin/utils/api';
 
 interface TaxConfig {
   gstEnabled: boolean;

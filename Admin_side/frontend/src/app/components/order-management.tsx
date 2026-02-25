@@ -1,20 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/app/components/ui/dialog';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from '@/app/components/ui/sheet';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Textarea } from '@/app/components/ui/textarea';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@admin/app/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from '@admin/app/components/ui/sheet';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
+import { Textarea } from '@admin/app/components/ui/textarea';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
 import { Clock, Package, CheckCircle, XCircle, Plus, CreditCard, Eye, IndianRupee, UtensilsCrossed, Zap, Minus, Search, Repeat, Flame, AlertCircle, TrendingUp, Activity, ChefHat, Coffee, Timer, Undo2, Gauge, MoveRight, MoveLeft, Ban, Sparkles, Pizza, ShoppingBag, ClipboardList } from 'lucide-react';
 import { toast } from 'sonner';
-import { ordersApi, menuApi, staffApi } from '@/utils/api';
-import { useAuth } from '@/utils/auth-context';
-import { PaymentDialog } from '@/app/components/payment-dialog';
-import { QuickOrderPOS } from '@/app/components/quick-order-pos';
+import { ordersApi, menuApi, staffApi } from '@admin/utils/api';
+import { useAuth } from '@admin/utils/auth-context';
+import { PaymentDialog } from '@admin/app/components/payment-dialog';
+import { QuickOrderPOS } from '@admin/app/components/quick-order-pos';
 
 interface Order {
   id: string;

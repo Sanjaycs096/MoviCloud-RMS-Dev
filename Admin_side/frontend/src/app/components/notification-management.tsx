@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { Badge } from '@/app/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
-import { Switch } from '@/app/components/ui/switch';
-import { Label } from '@/app/components/ui/label';
-import { Separator } from '@/app/components/ui/separator';
-import { cn } from '@/app/components/ui/utils';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@admin/app/components/ui/table';
+import { Switch } from '@admin/app/components/ui/switch';
+import { Label } from '@admin/app/components/ui/label';
+import { Separator } from '@admin/app/components/ui/separator';
+import { cn } from '@admin/app/components/ui/utils';
 import { 
   Bell,
   BellRing,

@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
+import { Button } from '@admin/app/components/ui/button';
+import { Badge } from '@admin/app/components/ui/badge';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from '@/app/components/ui/dropdown-menu';
+} from '@admin/app/components/ui/dropdown-menu';
 import { Bell, X, CheckCheck, Trash2 } from 'lucide-react';
-import { notificationService, type Notification } from '@/app/services/notification-service';
-import { cn } from '@/app/components/ui/utils';
+import { notificationService, type Notification } from '@admin/app/services/notification-service';
+import { cn } from '@admin/app/components/ui/utils';
 
 interface NotificationPanelProps {
   onNavigate?: (module: string) => void;

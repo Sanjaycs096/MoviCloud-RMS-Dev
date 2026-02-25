@@ -1,21 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Input } from '@/app/components/ui/input';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { cn } from '@/app/components/ui/utils';
-import { LoadingOrders } from '@/app/components/ui/loading-spinner';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Input } from '@admin/app/components/ui/input';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { cn } from '@admin/app/components/ui/utils';
+import { LoadingOrders } from '@admin/app/components/ui/loading-spinner';
 import {
   Clock, Package, CheckCircle, XCircle, AlertCircle, Zap, 
   Undo2, Play, ChefHat, Utensils, DollarSign, Trash2, Search,
   Timer, AlertTriangle, Coffee, Ban, Activity
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { ordersApi } from '@/utils/api';
+import { ordersApi } from '@admin/utils/api';
 
 // ============================================================================
 // TYPE DEFINITIONS

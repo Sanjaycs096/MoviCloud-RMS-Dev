@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/app/components/ui/dialog';
-import { Badge } from '@/app/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@admin/app/components/ui/dialog';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
 import { ShoppingCart, Plus, Minus, Trash2, Clock, CreditCard, IndianRupee } from 'lucide-react';
-import { menuApi, ordersApi } from '@/utils/api';
-import { USE_MOCK_DATA, mockMenuItems } from '@/utils/mock-data';
+import { menuApi, ordersApi } from '@admin/utils/api';
+import { USE_MOCK_DATA, mockMenuItems } from '@admin/utils/mock-data';
 import { toast } from 'sonner';
 
 interface MenuItem {

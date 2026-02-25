@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Button } from '@/app/components/ui/button';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
+import { Card, CardContent, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Button } from '@admin/app/components/ui/button';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
 import { 
   ShoppingCart, 
   Clock, 
@@ -13,8 +13,8 @@ import {
   User,
   MapPin
 } from 'lucide-react';
-import { restaurantState, type RestaurantOrder, type OrderStatus } from '@/app/services/restaurant-state';
-import { cn } from '@/app/components/ui/utils';
+import { restaurantState, type RestaurantOrder, type OrderStatus } from '@admin/app/services/restaurant-state';
+import { cn } from '@admin/app/components/ui/utils';
 
 function getOrderStatusConfig(status: OrderStatus) {
   switch (status) {

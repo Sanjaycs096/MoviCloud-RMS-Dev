@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
-import { AdminDashboard } from '@/app/components/admin-dashboard';
-import { MenuManagement } from '@/app/components/menu-management';
-import { OrderManagement } from '@/app/components/order-management';
-import { MochaKDS } from '@/app/components/mocha-kds';
-import { TableManagementComprehensive } from '@/app/components/table-management-comprehensive';
-import { InventoryManagement } from '@/app/components/inventory-management';
-import { StaffManagement } from '@/app/components/staff-management';
-import { BillingPayment } from '@/app/components/billing-payment';
-import { SecuritySettings } from '@/app/components/security-settings';
-import { OffersLoyalty } from '@/app/components/offers-loyalty';
-import { ReportsAnalytics } from '@/app/components/reports-analytics';
-import { NotificationManagement } from '@/app/components/notification-management';
-import { WelcomeBanner } from '@/app/components/welcome-banner';
-import { LoginPage } from '@/app/components/login-page';
-import { Button } from '@/app/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { Toaster } from '@/app/components/ui/sonner';
-import { SystemConfigProvider, useSystemConfig } from '@/utils/system-config-context';
-import { AuthProvider, useAuth, DEFAULT_TAB } from '@/utils/auth-context';
+import { AdminDashboard } from '@admin/app/components/admin-dashboard';
+import { MenuManagement } from '@admin/app/components/menu-management';
+import { OrderManagement } from '@admin/app/components/order-management';
+import { MochaKDS } from '@admin/app/components/mocha-kds';
+import { TableManagementComprehensive } from '@admin/app/components/table-management-comprehensive';
+import { InventoryManagement } from '@admin/app/components/inventory-management';
+import { StaffManagement } from '@admin/app/components/staff-management';
+import { BillingPayment } from '@admin/app/components/billing-payment';
+import { SecuritySettings } from '@admin/app/components/security-settings';
+import { OffersLoyalty } from '@admin/app/components/offers-loyalty';
+import { ReportsAnalytics } from '@admin/app/components/reports-analytics';
+import { NotificationManagement } from '@admin/app/components/notification-management';
+import { WelcomeBanner } from '@admin/app/components/welcome-banner';
+import { LoginPage } from '@admin/app/components/login-page';
+import { Button } from '@admin/app/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { Toaster } from '@admin/app/components/ui/sonner';
+import { SystemConfigProvider, useSystemConfig } from '@admin/utils/system-config-context';
+import { AuthProvider, useAuth, DEFAULT_TAB } from '@admin/utils/auth-context';
 import { 
   LayoutDashboard, 
   UtensilsCrossed, 
@@ -46,11 +46,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/app/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar";
-import { Badge } from "@/app/components/ui/badge";
+} from '@admin/app/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from '@admin/app/components/ui/avatar";
+import { Badge } from '@admin/app/components/ui/badge";
 
-import { AdminChatBox } from '@/app/components/AdminChatBox';
+import { AdminChatBox } from '@admin/app/components/AdminChatBox';
 
 function AppContent() {
   const { config, refreshConfig } = useSystemConfig();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
-import { Badge } from "@/app/components/ui/badge";
-import { Button } from "@/app/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from '@admin/app/components/ui/card";
+import { Badge } from '@admin/app/components/ui/badge";
+import { Button } from '@admin/app/components/ui/button";
 import { 
   LineChart, 
   Line, 
@@ -14,7 +14,7 @@ import {
   Area
 } from 'recharts';
 import { Users, UserCheck, Calendar, Clock, ArrowUpRight, ArrowDownRight, Loader2, ChefHat, User, CreditCard, ShieldCheck } from 'lucide-react';
-import { staffApi, attendanceApi } from '@/utils/api';
+import { staffApi, attendanceApi } from '@admin/utils/api';
 
 const attendanceData = [
   { day: 'Mon', rate: 92 },

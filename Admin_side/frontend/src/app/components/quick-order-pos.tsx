@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/app/components/ui/sheet';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Textarea } from '@/app/components/ui/textarea';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@admin/app/components/ui/sheet';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
+import { Textarea } from '@admin/app/components/ui/textarea';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
 import { 
   Plus, Minus, X, IndianRupee, UtensilsCrossed, Zap, 
   Search, Sparkles, ShoppingBag, CheckCircle, ChevronDown, 
@@ -18,14 +18,14 @@ import {
   Timer, TrendingUp, Package
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { API_BASE_URL } from '@/utils/supabase/info';
-import { tablesApi } from '@/utils/api';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
-import { restaurantState } from '@/app/services/restaurant-state';
-import { Switch } from '@/app/components/ui/switch';
-import { Progress } from '@/app/components/ui/progress';
+import { API_BASE_URL } from '@admin/utils/supabase/info';
+import { tablesApi } from '@admin/utils/api';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@admin/app/components/ui/dialog';
+import { restaurantState } from '@admin/app/services/restaurant-state';
+import { Switch } from '@admin/app/components/ui/switch';
+import { Progress } from '@admin/app/components/ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/app/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@admin/app/components/ui/collapsible';
 
 // ==================== INTERFACES ====================
 

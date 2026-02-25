@@ -2,26 +2,26 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
-import { RadioGroup, RadioGroupItem } from '@/app/components/ui/radio-group';
-import { Switch } from '@/app/components/ui/switch';
-import { Separator } from '@/app/components/ui/separator';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/app/components/ui/dialog';
-import { cn } from '@/app/components/ui/utils';
-import { LoadingBilling } from '@/app/components/ui/loading-spinner';
+import { Button } from '@admin/app/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@admin/app/components/ui/card';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Input } from '@admin/app/components/ui/input';
+import { Label } from '@admin/app/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@admin/app/components/ui/tabs';
+import { ScrollArea } from '@admin/app/components/ui/scroll-area';
+import { RadioGroup, RadioGroupItem } from '@admin/app/components/ui/radio-group';
+import { Switch } from '@admin/app/components/ui/switch';
+import { Separator } from '@admin/app/components/ui/separator';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@admin/app/components/ui/dialog';
+import { cn } from '@admin/app/components/ui/utils';
+import { LoadingBilling } from '@admin/app/components/ui/loading-spinner';
 import {
   DollarSign, CreditCard, Smartphone, Wallet, Receipt,
   CheckCircle, Clock, AlertCircle, Percent, IndianRupee,
   Printer, Download, Coffee, FileText
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { mockApi, type MockOrder, type MockInvoice } from '@/app/services/mock-api';
+import { mockApi, type MockOrder, type MockInvoice } from '@admin/app/services/mock-api';
 
 // ============================================================================
 // BILL GENERATION CARD COMPONENT

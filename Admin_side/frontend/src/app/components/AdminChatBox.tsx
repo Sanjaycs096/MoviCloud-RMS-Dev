@@ -11,17 +11,17 @@ import {
   CheckCheck,
   Clock
 } from 'lucide-react';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Badge } from '@/app/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/app/components/ui/avatar';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Avatar, AvatarFallback } from '@admin/app/components/ui/avatar';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuTrigger 
-} from '@/app/components/ui/dropdown-menu';
-import { cn } from '@/app/components/ui/utils';
+} from '@admin/app/components/ui/dropdown-menu';
+import { cn } from '@admin/app/components/ui/utils';
 import { toast } from 'sonner';
 
 type Role = 'Admin' | 'Manager' | 'Chef' | 'Cashier';

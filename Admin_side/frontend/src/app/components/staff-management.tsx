@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
+import { Button } from '@admin/app/components/ui/button';
+import { Input } from '@admin/app/components/ui/input';
 import {
   Tabs,
   TabsContent,
-} from '@/app/components/ui/tabs';
+} from '@admin/app/components/ui/tabs';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/app/components/ui/select';
+} from '@admin/app/components/ui/select';
 import {
   Search,
   LayoutDashboard,
@@ -21,9 +21,9 @@ import {
   FileBarChart,
   Filter,
 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar";
-import { cn } from '@/app/components/ui/utils';
-import { useAuth } from '@/utils/auth-context';
+import { Avatar, AvatarFallback, AvatarImage } from '@admin/app/components/ui/avatar";
+import { cn } from '@admin/app/components/ui/utils';
+import { useAuth } from '@admin/utils/auth-context';
 
 // Import sub-components
 import { StaffOverview } from "./staff/StaffOverview";

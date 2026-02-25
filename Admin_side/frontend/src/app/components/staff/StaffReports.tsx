@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
-import { Button } from "@/app/components/ui/button";
-import { Input } from "@/app/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from '@admin/app/components/ui/card";
+import { Button } from '@admin/app/components/ui/button";
+import { Input } from '@admin/app/components/ui/input";
 import { 
   BarChart, 
   Bar, 
@@ -16,7 +16,7 @@ import {
   Cell 
 } from 'recharts';
 import { Calendar as CalendarIcon, CheckCircle2, Loader2 } from 'lucide-react';
-import { staffApi, shiftsApi } from '@/utils/api';
+import { staffApi, shiftsApi } from '@admin/utils/api';
 
 interface StaffStats {
   byRole: Record<string, number>;

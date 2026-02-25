@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
+import { Button } from '@admin/app/components/ui/button';
+import { Badge } from '@admin/app/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -8,11 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/app/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Label } from '@/app/components/ui/label';
+} from '@admin/app/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@admin/app/components/ui/select';
+import { Label } from '@admin/app/components/ui/label';
 import { UserCog, ShieldCheck, UserCheck } from 'lucide-react';
-import { restaurantState, type UserRole } from '@/app/services/restaurant-state';
+import { restaurantState, type UserRole } from '@admin/app/services/restaurant-state';
 import { toast } from 'sonner';
 
 interface WaiterOption {

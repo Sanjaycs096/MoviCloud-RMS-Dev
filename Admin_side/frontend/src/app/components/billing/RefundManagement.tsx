@@ -10,15 +10,15 @@ import {
   AlertCircle,
   FileText
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
-import { Textarea } from '@/app/components/ui/textarea';
-import { Label } from '@/app/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@admin/app/components/ui/card';
+import { Button } from '@admin/app/components/ui/button';
+import { Badge } from '@admin/app/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@admin/app/components/ui/dialog';
+import { Textarea } from '@admin/app/components/ui/textarea';
+import { Label } from '@admin/app/components/ui/label';
 import { toast } from 'sonner';
 import { format, differenceInMinutes, differenceInHours } from 'date-fns';
-import { cn } from '@/app/components/ui/utils';
+import { cn } from '@admin/app/components/ui/utils';
 
 // --- Types ---
 type RequestStatus = 'Pending' | 'Approved' | 'Rejected';
