@@ -2,43 +2,19 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import type { Plugin } from 'vite'
 
-// ---------------------------------------------------------------------------
-// Custom plugin: resolve `@/…` imports that originate from Admin_side files.
-// Admin components use `@/` which must point to Admin_side/frontend/src,
-// while User components' `@/` points to User_side/src.
-// ---------------------------------------------------------------------------
+const USER_SRC  = path.resolve(__dirname, './src')
 const ADMIN_SRC = path.resolve(__dirname, '../Admin_side/frontend/src')
-
-function adminAliasResolver(): Plugin {
-  return {
-    name: 'admin-alias-resolver',
-    enforce: 'pre',
-    resolveId(source, importer) {
-      if (
-        source.startsWith('@/') &&
-        importer &&
-        (importer.replace(/\\/g, '/').includes('Admin_side/frontend/src') ||
-          importer.replace(/\\/g, '/').includes('Admin_side/frontend/node_modules'))
-      ) {
-        return path.resolve(ADMIN_SRC, source.slice(2))
-      }
-    },
-  }
-}
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    adminAliasResolver(),
   ],
   server: {
     port: 5173,
     strictPort: true,
     proxy: {
-      // All /api/* requests → unified backend on 8000
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
@@ -47,10 +23,20 @@ export default defineConfig({
   },
   resolve: {
     alias: [
-      // User app alias (default @)
-      { find: '@', replacement: path.resolve(__dirname, './src') },
-      // Admin app alias (@admin)
+      // @admin/* → Admin_side/frontend/src/* (explicit prefix, checked first)
       { find: '@admin', replacement: ADMIN_SRC },
+      // @/* — context-aware: resolve to Admin src when importer is inside Admin_side,
+      //        otherwise resolve to User src.
+      {
+        find: /^@\//,
+        replacement: '',
+        customResolver(source: string, importer: string | undefined) {
+          const rel  = source.slice(2) // strip '@/'
+          const imp  = (importer ?? '').replace(/\\/g, '/')
+          const base = imp.includes('Admin_side') ? ADMIN_SRC : USER_SRC
+          return path.resolve(base, rel)
+        },
+      },
     ],
   },
   optimizeDeps: {
@@ -58,7 +44,6 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      // Prevent rollup from treating large admin bundle as warning
       onwarn(warning, warn) {
         if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return
         warn(warning)
