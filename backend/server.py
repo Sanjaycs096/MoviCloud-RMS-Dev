@@ -36,12 +36,31 @@ os.environ["API_PREFIX"] = ""
 if "CORS_ORIGINS" not in os.environ:
     os.environ["CORS_ORIGINS"] = "http://localhost:5174,http://127.0.0.1:5174,http://localhost:5000,http://127.0.0.1:5000,*"
 
-from backend.app import create_app as create_flask_app  # noqa: E402
+print(f"[server.py] Python path: {sys.path[:3]}")  # Show first 3 paths
+print(f"[server.py] ROOT: {ROOT}")
+print(f"[server.py] USER_SIDE: {USER_SIDE}")
+print(f"[server.py] ADMIN_BACK: {ADMIN_BACK}")
 
-flask_app = create_flask_app()
+try:
+    from backend.app import create_app as create_flask_app  # noqa: E402
+    flask_app = create_flask_app()
+    print(f"[server.py] ✓ Flask app created successfully")
+    print(f"[server.py] Flask routes: {[str(rule) for rule in flask_app.url_map.iter_rules()][:10]}")  # Show first 10 routes
+except Exception as e:
+    print(f"[server.py] ✗ ERROR creating Flask app: {e}")
+    import traceback
+    traceback.print_exc()
+    raise
 
 # ── 3. FastAPI admin sub-application ─────────────────────────────────────────
-from admin_sub import admin_sub  # noqa: E402
+try:
+    from admin_sub import admin_sub  # noqa: E402
+    print(f"[server.py] ✓ Admin FastAPI app imported successfully")
+except Exception as e:
+    print(f"[server.py] ✗ ERROR importing admin_sub: {e}")
+    import traceback
+    traceback.print_exc()
+    raise
 
 # ── 4. Starlette routing ──────────────────────────────────────────────────────
 from starlette.applications import Starlette          # noqa: E402
@@ -56,20 +75,30 @@ async def root_health(request):
     return JSONResponse({"status": "ok", "service": "RMS Unified Backend", "version": "2.0"})
 
 
+async def dev_root(request):
+    """Development root endpoint when frontend is not built."""
+    return JSONResponse({
+        "message": "RMS Backend - Development Mode",
+        "frontend": "Not built - use separate dev server",
+        "api_docs_admin": "/api/admin/docs",
+    })
+
+
 routes = [
-    # Health check endpoints
+    # Health check endpoints (must be first - most specific)
     Route("/health", root_health),
     Route("/api/health", root_health),
-    # Admin FastAPI — mounted at /api/admin (prefix stripped → /staff, /menu …)
+    # Admin FastAPI — mounted at /api/admin (most specific API path first)
     Mount("/api/admin", app=admin_sub),
-    # User Flask  — mounted at /api       (prefix stripped → /auth, /menu …)
+    # User Flask  — mounted at /api
     Mount("/api", app=WSGIMiddleware(flask_app)),
 ]
 
-# In production serve the pre-built Vite frontend
+# In production serve the pre-built Vite frontend (LAST - catches all remaining)
 if FRONTEND_DIST.exists():
     from starlette.staticfiles import StaticFiles      # noqa: E402
 
+    # Frontend static files - must handle SPA routing
     routes.append(
         Mount(
             "/",
@@ -77,8 +106,11 @@ if FRONTEND_DIST.exists():
             name="frontend",
         )
     )
+else:
+    # Development: Simple root endpoint
+    routes.insert(0, Route("/", dev_root))
 
-app = Starlette(routes=routes)
+app = Starlette(debug=False, routes=routes)
 
 # ── 5. Add CORS middleware to handle preflight requests ──────────────────────
 # Parse allowed origins from environment

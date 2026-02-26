@@ -42,15 +42,19 @@ def _get_client() -> MongoClient:
             _client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
             # Test connection
             _client.server_info()
-            print(f"[User Backend] MongoDB connected successfully to database: {MONGO_DB_NAME}")
+            print(f"[User Backend] ✓ MongoDB connected successfully to database: {MONGO_DB_NAME}")
         except Exception as e:
-            print(f"[User Backend] MongoDB connection error: {e}")
-            raise
+            print(f"[User Backend] ✗ MongoDB connection error: {e}")
+            print(f"[User Backend] ⚠️  WARNING: Continuing without MongoDB - API calls will fail")
+            # Return None instead of raising - allow server to start
+            return None
     return _client
 
 
 def get_db():
     client = _get_client()
+    if client is None:
+        raise RuntimeError("MongoDB not connected - check MONGODB_URI environment variable")
     if MONGO_DB_NAME:
         return client.get_database(MONGO_DB_NAME)
     return client.get_database()
