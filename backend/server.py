@@ -46,6 +46,7 @@ from admin_sub import admin_sub  # noqa: E402
 # ── 4. Starlette routing ──────────────────────────────────────────────────────
 from starlette.applications import Starlette          # noqa: E402
 from starlette.middleware.wsgi import WSGIMiddleware   # noqa: E402
+from starlette.middleware.cors import CORSMiddleware   # noqa: E402
 from starlette.routing import Mount, Route             # noqa: E402
 from starlette.responses import JSONResponse           # noqa: E402
 
@@ -78,6 +79,24 @@ if FRONTEND_DIST.exists():
     )
 
 app = Starlette(routes=routes)
+
+# ── 5. Add CORS middleware to handle preflight requests ──────────────────────
+# Parse allowed origins from environment
+cors_origins_env = os.getenv("CORS_ORIGINS", "*")
+if cors_origins_env == "*" or "," not in cors_origins_env:
+    allowed_origins = ["*"]
+else:
+    allowed_origins = [origin.strip() for origin in cors_origins_env.split(",")]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
+)
 
 
 if __name__ == "__main__":
