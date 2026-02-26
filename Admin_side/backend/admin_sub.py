@@ -47,14 +47,37 @@ from app.routes import recipes as recipes_router  # noqa: E402
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Lifespan handler - starts MongoDB and scheduler, but allows server to start even on errors."""
+    mongodb_connected = False
+    scheduler_started = False
+    
+    # Attempt MongoDB connection
     try:
         init_db()
-        print("[admin_sub] MongoDB connected")
-        await start_scheduler()
-    except Exception as exc:  # pragma: no cover
-        print(f"[admin_sub] startup warning: {exc}")
+        mongodb_connected = True
+        print("[admin_sub] ✓ MongoDB connected successfully")
+    except Exception as exc:
+        print(f"[admin_sub] ✗ MongoDB connection failed: {exc}")
+        print("[admin_sub] Server will start but database operations will fail")
+    
+    # Attempt scheduler start (only if MongoDB connected)
+    if mongodb_connected:
+        try:
+            await start_scheduler()
+            scheduler_started = True
+            print("[admin_sub] ✓ Scheduler started successfully")
+        except Exception as exc:
+            print(f"[admin_sub] ✗ Scheduler start failed: {exc}")
+    
     yield
-    shutdown_scheduler()
+    
+    # Cleanup
+    if scheduler_started:
+        try:
+            shutdown_scheduler()
+            print("[admin_sub] Scheduler stopped")
+        except Exception as exc:
+            print(f"[admin_sub] Scheduler shutdown warning: {exc}")
 
 
 admin_sub = FastAPI(title="RMS Admin API", lifespan=lifespan)

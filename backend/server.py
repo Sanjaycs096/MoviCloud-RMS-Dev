@@ -46,9 +46,19 @@ from admin_sub import admin_sub  # noqa: E402
 # ── 4. Starlette routing ──────────────────────────────────────────────────────
 from starlette.applications import Starlette          # noqa: E402
 from starlette.middleware.wsgi import WSGIMiddleware   # noqa: E402
-from starlette.routing import Mount                    # noqa: E402
+from starlette.routing import Mount, Route             # noqa: E402
+from starlette.responses import JSONResponse           # noqa: E402
+
+
+async def root_health(request):
+    """Root health check - returns 200 OK even if MongoDB is not connected."""
+    return JSONResponse({"status": "ok", "service": "RMS Unified Backend", "version": "2.0"})
+
 
 routes = [
+    # Health check endpoints
+    Route("/health", root_health),
+    Route("/api/health", root_health),
     # Admin FastAPI — mounted at /api/admin (prefix stripped → /staff, /menu …)
     Mount("/api/admin", app=admin_sub),
     # User Flask  — mounted at /api       (prefix stripped → /auth, /menu …)

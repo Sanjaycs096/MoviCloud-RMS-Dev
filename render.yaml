@@ -32,7 +32,7 @@ services:
         value: production
       - key: API_PREFIX
         value: ""
-    healthCheckPath: /api/admin/health
+    healthCheckPath: /health
     autoDeploy: true
 
   # -- 2. Unified Frontend ------------------------------------------------------
