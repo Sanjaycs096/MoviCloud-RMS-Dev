@@ -34,32 +34,26 @@ os.environ["API_PREFIX"] = ""
 # Update CORS to accept requests from frontend
 # In production, CORS_ORIGINS is set in render.yaml
 if "CORS_ORIGINS" not in os.environ:
-    os.environ["CORS_ORIGINS"] = "http://localhost:5174,http://127.0.0.1:5174,http://localhost:5000,http://127.0.0.1:5000,*"
+    os.environ["CORS_ORIGINS"] = "http://localhost:5174,http://127.0.0.1:5174,http://localhost:5000,http://127.0.0.1:5000"
 
-print(f"[server.py] Python path: {sys.path[:3]}")  # Show first 3 paths
-print(f"[server.py] ROOT: {ROOT}")
-print(f"[server.py] USER_SIDE: {USER_SIDE}")
-print(f"[server.py] ADMIN_BACK: {ADMIN_BACK}")
+print(f"[server.py] Starting RMS Unified Backend...")
+print(f"[server.py] Python {sys.version}")
+print(f"[server.py] Working directory: {os.getcwd()}")
 
 try:
     from backend.app import create_app as create_flask_app  # noqa: E402
     flask_app = create_flask_app()
-    print(f"[server.py] ✓ Flask app created successfully")
-    print(f"[server.py] Flask routes: {[str(rule) for rule in flask_app.url_map.iter_rules()][:10]}")  # Show first 10 routes
+    print(f"[server.py] ✓ Flask app initialized")
 except Exception as e:
-    print(f"[server.py] ✗ ERROR creating Flask app: {e}")
-    import traceback
-    traceback.print_exc()
+    print(f"[server.py] ✗ ERROR: Failed to create Flask app: {e}")
     raise
 
 # ── 3. FastAPI admin sub-application ─────────────────────────────────────────
 try:
     from admin_sub import admin_sub  # noqa: E402
-    print(f"[server.py] ✓ Admin FastAPI app imported successfully")
+    print(f"[server.py] ✓ Admin FastAPI app initialized")
 except Exception as e:
-    print(f"[server.py] ✗ ERROR importing admin_sub: {e}")
-    import traceback
-    traceback.print_exc()
+    print(f"[server.py] ✗ ERROR: Failed to import admin_sub: {e}")
     raise
 
 # ── 4. Starlette routing ──────────────────────────────────────────────────────
@@ -135,6 +129,9 @@ app.add_middleware(
     expose_headers=["*"],
     max_age=3600,
 )
+
+print(f"[server.py] ✓ CORS middleware configured: {len(allowed_origins)} origins")
+print(f"[server.py] ✓ Application ready - waiting for requests...")
 
 
 if __name__ == "__main__":
