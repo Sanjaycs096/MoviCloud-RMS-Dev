@@ -12,15 +12,27 @@ def init_db(uri: str = None):
     if uri is None:
         uri = os.getenv('MONGODB_URI')
     if not uri:
+        print('[Admin Backend] ERROR: MONGODB_URI environment variable is not set!')
+        print('[Admin Backend] Please set MONGODB_URI in Render dashboard or .env file')
         raise RuntimeError('MONGODB_URI must be set')
-    _client = AsyncIOMotorClient(uri)
-    # Try to get database from URI, fallback to 'restaurant_db'
-    default_db = _client.get_default_database()
-    if default_db is not None:
-        db = default_db
-    else:
-        db = _client['restaurant_db']
-    return db
+    
+    # Log connection attempt (without exposing password)
+    uri_safe = uri.split('@')[-1] if '@' in uri else uri
+    print(f'[Admin Backend] Connecting to MongoDB: ...@{uri_safe}')
+    
+    try:
+        _client = AsyncIOMotorClient(uri, serverSelectionTimeoutMS=5000)
+        # Try to get database from URI, fallback to 'restaurant_db'
+        default_db = _client.get_default_database()
+        if default_db is not None:
+            db = default_db
+        else:
+            db = _client['restaurant_db']
+        print(f'[Admin Backend] MongoDB connected successfully to database: {db.name}')
+        return db
+    except Exception as e:
+        print(f'[Admin Backend] MongoDB connection error: {e}')
+        raise
 
 
 def get_db():

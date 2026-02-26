@@ -21,6 +21,14 @@ else:
 
 # Admin_side uses MONGODB_URI; extract DB name from the URI path
 MONGO_URI = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017/restaurant_db")
+
+# Log MongoDB connection info (without exposing password)
+if MONGO_URI and MONGO_URI.startswith("mongodb"):
+    uri_safe = MONGO_URI.split("@")[-1] if "@" in MONGO_URI else MONGO_URI
+    print(f"[User Backend] MongoDB URI configured: ...@{uri_safe}")
+else:
+    print(f"[User Backend] WARNING: MONGODB_URI not set, using default local MongoDB")
+
 # DB name is the last segment of the URI path (e.g. /restaurant_db)
 MONGO_DB_NAME = MONGO_URI.rstrip("/").rsplit("/", 1)[-1].split("?")[0].strip()
 
@@ -30,7 +38,14 @@ _client: Optional[MongoClient] = None
 def _get_client() -> MongoClient:
     global _client
     if _client is None:
-        _client = MongoClient(MONGO_URI)
+        try:
+            _client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+            # Test connection
+            _client.server_info()
+            print(f"[User Backend] MongoDB connected successfully to database: {MONGO_DB_NAME}")
+        except Exception as e:
+            print(f"[User Backend] MongoDB connection error: {e}")
+            raise
     return _client
 
 
