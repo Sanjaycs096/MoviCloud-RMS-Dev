@@ -38,19 +38,21 @@ def create_app() -> Flask:
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    cors_origins = os.getenv("CORS_ORIGINS", "*")
+    cors_origins = os.getenv("CORS_ORIGINS", "https://rms-dev.onrender.com,http://localhost:5174")
     
-    # Parse CORS origins - if "*" is present or empty, allow all origins
-    if not cors_origins or cors_origins.strip() == "*" or "*" in cors_origins.split(","):
+    # Parse CORS origins - if "*" is present, allow all (but can't use credentials)
+    if "*" in cors_origins:
         origins = "*"
+        supports_credentials = False
     else:
         origins = [o.strip() for o in cors_origins.split(",") if o.strip()]
+        supports_credentials = True
     
-    # Apply CORS to all routes with credentials support
+    # Apply CORS to all routes
     CORS(
         app, 
         resources={r"/*": {"origins": origins}},
-        supports_credentials=True,
+        supports_credentials=supports_credentials,
         allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
         methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         expose_headers=["Content-Type", "Authorization"]

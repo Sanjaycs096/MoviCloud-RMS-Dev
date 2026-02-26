@@ -83,19 +83,23 @@ async def lifespan(app: FastAPI):
 admin_sub = FastAPI(title="RMS Admin API", lifespan=lifespan)
 
 # CORS — allow frontend and backend domains
-_cors_origins = os.getenv("CORS_ORIGINS", "")
+_cors_origins = os.getenv("CORS_ORIGINS", "https://rms-dev.onrender.com,http://localhost:5174")
 _extra = os.getenv("CORS_EXTRA_ORIGINS", "")
 _all_origins = f"{_cors_origins},{_extra}"
 _origins = [o.strip() for o in _all_origins.split(",") if o.strip()]
 
-if not _origins or "*" in _origins:
+# Check if wildcard is requested
+if "*" in _all_origins:
     _origins = ["*"]
+    _allow_credentials = False  # Can't use credentials with wildcard
+else:
+    _allow_credentials = True
 
 admin_sub.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
     allow_origin_regex=r"https://.*\.onrender\.com|https://.*\.vercel\.app|http://localhost.*|http://127\.0\.0\.1.*",
-    allow_credentials=True,
+    allow_credentials=_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],

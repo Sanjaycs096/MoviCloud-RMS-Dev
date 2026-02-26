@@ -82,16 +82,22 @@ app = Starlette(routes=routes)
 
 # ── 5. Add CORS middleware to handle preflight requests ──────────────────────
 # Parse allowed origins from environment
-cors_origins_env = os.getenv("CORS_ORIGINS", "*")
-if cors_origins_env == "*" or "," not in cors_origins_env:
+cors_origins_env = os.getenv("CORS_ORIGINS", "https://rms-dev.onrender.com,http://localhost:5174")
+
+# Check if wildcard is needed
+if "*" in cors_origins_env:
+    # Use regex pattern to allow all origins
     allowed_origins = ["*"]
+    allow_credentials = False  # Can't use credentials with wildcard
 else:
-    allowed_origins = [origin.strip() for origin in cors_origins_env.split(",")]
+    # Parse specific origins
+    allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+    allow_credentials = True
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_credentials=allow_credentials,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["*"],
