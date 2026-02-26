@@ -59,14 +59,19 @@ async def lifespan(app: FastAPI):
 
 admin_sub = FastAPI(title="RMS Admin API", lifespan=lifespan)
 
-# CORS — allow same-origin (frontend served by unified backend or same static host)
+# CORS — allow frontend and backend domains
+_cors_origins = os.getenv("CORS_ORIGINS", "")
 _extra = os.getenv("CORS_EXTRA_ORIGINS", "")
-_origins = [o.strip() for o in _extra.split(",") if o.strip()] or ["*"]
+_all_origins = f"{_cors_origins},{_extra}"
+_origins = [o.strip() for o in _all_origins.split(",") if o.strip()]
+
+if not _origins or "*" in _origins:
+    _origins = ["*"]
 
 admin_sub.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
-    allow_origin_regex=r"https://.*\.onrender\.com|https://.*\.vercel\.app",
+    allow_origin_regex=r"https://.*\.onrender\.com|https://.*\.vercel\.app|http://localhost.*|http://127\.0\.0\.1.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
