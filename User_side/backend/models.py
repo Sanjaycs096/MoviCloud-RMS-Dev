@@ -1,8 +1,38 @@
 from __future__ import annotations
 
 from datetime import datetime
+import json
 
 from .db import db
+
+
+class User(db.Model):
+    """Local SQLite user store — used as fallback when MongoDB is unavailable."""
+    __tablename__ = "users"
+
+    email = db.Column(db.String(200), primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    phone = db.Column(db.String(32), nullable=False, default="")
+    address = db.Column(db.Text, nullable=False, default="")
+    password_hash = db.Column(db.Text, nullable=False)
+    loyalty_points = db.Column(db.Integer, nullable=False, default=100)
+    favorites_json = db.Column(db.Text, nullable=False, default="[]")
+    membership_json = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow,
+                           onupdate=datetime.utcnow)
+
+    def to_doc(self) -> dict:
+        return {
+            "email": self.email,
+            "name": self.name,
+            "phone": self.phone,
+            "address": self.address,
+            "passwordHash": self.password_hash,
+            "loyaltyPoints": self.loyalty_points,
+            "favorites": json.loads(self.favorites_json or "[]"),
+            "membership": json.loads(self.membership_json) if self.membership_json else None,
+        }
 
 
 class MenuItem(db.Model):
