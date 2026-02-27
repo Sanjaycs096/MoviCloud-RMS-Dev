@@ -6,6 +6,9 @@ echo.
 
 cd /d "%~dp0User_side"
 
+echo Stopping any running Vite dev server...
+taskkill /f /im node.exe /fi "WINDOWTITLE eq vite*" >nul 2>&1
+
 echo Writing correct local dev env variables...
 (
 echo VITE_API_BASE_URL=

@@ -4,7 +4,12 @@ export function getApiBaseUrl(): string {
   const raw = import.meta.env.VITE_API_BASE_URL as string | undefined;
   // Empty string = use Vite's proxy (/api/* → localhost:8000) for local dev.
   // In production, VITE_API_BASE_URL is baked in via .env.production at build time.
-  return (raw && raw.trim().length > 0 ? raw.trim() : "").replace(/\/+$/, "");
+  // Strip trailing /api if present — all callers already include /api in their paths.
+  let base = (raw && raw.trim().length > 0 ? raw.trim() : "").replace(/\/+$/, "");
+  if (base.endsWith("/api")) {
+    base = base.slice(0, -4);
+  }
+  return base;
 }
 
 export async function apiRequest<T>(
