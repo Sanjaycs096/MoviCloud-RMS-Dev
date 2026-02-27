@@ -42,10 +42,14 @@ if not exist "..\Admin_side\frontend\node_modules\" (
     echo Installing Admin_side npm dependencies...
     call npm install --prefix ../Admin_side/frontend
 )
-echo Building frontend with local API config (same-origin calls)...
-set VITE_API_BASE_URL=
-set VITE_API_URL=/api/admin
+echo Writing local build env overrides...
+(
+echo VITE_API_BASE_URL=http://localhost:8000
+echo VITE_API_URL=http://localhost:8000/api/admin
+)> .env.production.local
+echo Building frontend with local backend URL (http://localhost:8000)...
 call npm run build
+del .env.production.local 2>nul
 cd ..
 echo Frontend built into User_side/dist
 

@@ -6,6 +6,12 @@ echo.
 
 cd /d "%~dp0User_side"
 
+echo Writing correct local dev env variables...
+(
+echo VITE_API_BASE_URL=
+echo VITE_API_URL=/api/admin
+)> .env
+
 echo Checking for node_modules...
 if not exist "node_modules\" (
     echo.
