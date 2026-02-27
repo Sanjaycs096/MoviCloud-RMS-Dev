@@ -27,9 +27,17 @@ USER_SIDE   = ROOT / "User_side"
 ADMIN_BACK  = ROOT / "Admin_side" / "backend"
 FRONTEND_DIST = USER_SIDE / "dist"
 
+# CRITICAL: insert User_side/ at position 0 BEFORE any other path manipulation.
+# This ensures `import backend` → User_side/backend/, not any other backend/ dir.
 for p in (str(USER_SIDE), str(ADMIN_BACK)):
     if p not in sys.path:
         sys.path.insert(0, p)
+
+# Purge any stale `backend` module that uvicorn/importlib may have loaded from
+# the repo-root backend/ directory before our sys.path manipulation above.
+for _key in list(sys.modules.keys()):
+    if _key == "backend" or _key.startswith("backend."):
+        del sys.modules[_key]
 
 # ── 2. Flask user backend ─────────────────────────────────────────────────────
 # Set API_PREFIX="" BEFORE load_dotenv runs; Flask routes become /auth, /menu …
@@ -60,9 +68,23 @@ except Exception as e:
 try:
     from admin_sub import admin_sub  # noqa: E402
     print(f"[server.py] ✓ Admin FastAPI app initialized")
+    _admin_ok = True
 except Exception as e:
-    print(f"[server.py] ✗ ERROR: Failed to import admin_sub: {e}")
-    raise
+    import traceback
+    print(f"[server.py] ✗ Admin FastAPI import failed: {e}")
+    traceback.print_exc()
+    # Create a stub FastAPI app so the rest of the backend still works
+    from fastapi import FastAPI as _FastAPI
+    from starlette.responses import JSONResponse as _JSONResponse
+
+    _stub = _FastAPI()
+
+    @_stub.api_route("/{path:path}", methods=["GET","POST","PUT","PATCH","DELETE","OPTIONS"])
+    async def _admin_stub(path: str):
+        return _JSONResponse({"error": "Admin service unavailable", "detail": str(e)}, status_code=503)
+
+    admin_sub = _stub
+    _admin_ok = False
 
 # ── 4. Starlette routing ──────────────────────────────────────────────────────
 from starlette.applications import Starlette          # noqa: E402
@@ -190,7 +212,6 @@ class CORSMiddleware:
 
         async def send_with_cors(message):
             if message["type"] == "http.response.start":
-                existing = [k for k, _ in message.get("headers", [])]
                 # Strip any CORS headers already set downstream (Flask-CORS, FastAPI) to avoid duplicates
                 clean = [
                     (k, v) for k, v in message.get("headers", [])
@@ -205,7 +226,12 @@ class CORSMiddleware:
                 message = {**message, "headers": clean + cors_headers_to_inject}
             await send(message)
 
-        await self.app(scope, receive, send_with_cors)
+        try:
+            await self.app(scope, receive, send_with_cors)
+        except Exception:
+            # If the inner app raised (unhandled 500), we still need to ensure
+            # the CORS headers were injected.  Re-raise so uvicorn handles it.
+            raise
 
 
 app = CORSMiddleware(Starlette(debug=False, routes=routes))

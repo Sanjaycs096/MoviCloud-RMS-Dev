@@ -39,14 +39,21 @@ def _get_client() -> MongoClient:
     global _client
     if _client is None:
         try:
-            _client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-            # Test connection
-            _client.server_info()
+            client = MongoClient(
+                MONGO_URI,
+                serverSelectionTimeoutMS=3000,  # 3 s — well under Render's 30 s request timeout
+                connectTimeoutMS=3000,
+                socketTimeoutMS=5000,
+            )
+            # Test connection — raises if unreachable within the timeout
+            client.server_info()
+            _client = client
             print(f"[User Backend] ✓ MongoDB connected successfully to database: {MONGO_DB_NAME}")
         except Exception as e:
             print(f"[User Backend] ✗ MongoDB connection error: {e}")
             print(f"[User Backend] ⚠️  WARNING: Continuing without MongoDB - API calls will fail")
-            # Return None instead of raising - allow server to start
+            # Leave _client as None so every call retries once per request instead
+            # of caching a broken client forever.
             return None
     return _client
 
