@@ -30,6 +30,27 @@ pip install -r backend\requirements.txt
 
 echo.
 echo ========================================
+echo   Building Frontend (local mode)...
+echo ========================================
+echo.
+cd User_side
+if not exist "node_modules\" (
+    echo Installing User_side npm dependencies...
+    call npm install
+)
+if not exist "..\Admin_side\frontend\node_modules\" (
+    echo Installing Admin_side npm dependencies...
+    call npm install --prefix ../Admin_side/frontend
+)
+echo Building frontend with local API config (same-origin calls)...
+set VITE_API_BASE_URL=
+set VITE_API_URL=/api/admin
+call npm run build
+cd ..
+echo Frontend built into User_side/dist
+
+echo.
+echo ========================================
 echo   Starting Unified Backend Server...
 echo ========================================
 echo.

@@ -36,8 +36,16 @@ def init_db(uri: str = None):
 
 
 def get_db():
-    """Get the database instance"""
+    """Get the database instance, auto-initializing if possible."""
     global db
-    if db is None:
-        raise RuntimeError('Database not initialized. Call init_db() first.')
-    return db
+    if db is not None:
+        return db
+    # Try to initialize now (e.g. MONGODB_URI set in env but lifespan failed)
+    try:
+        return init_db()
+    except Exception as exc:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=503,
+            detail=f"Database unavailable: {exc}. Ensure MONGODB_URI is set in Render dashboard."
+        )
