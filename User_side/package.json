@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build": "npm install --prefix ../Admin_side/frontend && vite build",
+    "build": "vite build",
     "dev": "concurrently --kill-others-on-fail --names \"frontend,backend\" --prefix-colors \"cyan.bold,yellow.bold\" \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "vite --port 5174",
     "dev:backend": "cd ../backend && venv\\Scripts\\python.exe -m uvicorn server:app --reload --host 127.0.0.1 --port 8000",

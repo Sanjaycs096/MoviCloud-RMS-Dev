@@ -95,8 +95,39 @@ import re as _re                                       # noqa: E402
 
 
 async def root_health(request):
-    """Root health check - returns 200 OK even if MongoDB is not connected."""
-    return JSONResponse({"status": "ok", "service": "RMS Unified Backend", "version": "2.0"})
+    """Detailed health check — shows MongoDB status and registered route count."""
+    import sys as _sys
+    mongo_ok = False
+    mongo_detail = "not checked"
+    try:
+        from backend.mongo import _get_client, MONGO_DB_NAME
+        client = _get_client()
+        if client:
+            client.admin.command("ping")
+            mongo_ok = True
+            mongo_detail = f"connected ({MONGO_DB_NAME})"
+        else:
+            mongo_detail = "client is None — check MONGODB_URI env var"
+    except Exception as exc:
+        mongo_detail = str(exc)[:120]
+
+    # Count Flask routes
+    flask_routes = []
+    try:
+        for rule in flask_app.url_map.iter_rules():
+            flask_routes.append(rule.rule)
+    except Exception:
+        pass
+
+    return JSONResponse({
+        "status": "ok" if mongo_ok else "degraded",
+        "service": "RMS Unified Backend",
+        "version": "2.0",
+        "mongodb": mongo_detail,
+        "flask_routes": len(flask_routes),
+        "python": _sys.version.split()[0],
+        "admin_ok": _admin_ok,
+    }, status_code=200)  # Always 200 so Render health check passes
 
 
 async def dev_root(request):
@@ -108,10 +139,69 @@ async def dev_root(request):
     })
 
 
+async def api_seed(request):
+    """POST /api/seed — seeds MongoDB with menu items and admin staff."""
+    secret = request.query_params.get("secret", "")
+    expected = os.getenv("SEED_SECRET", "seed123")
+    if secret != expected:
+        return JSONResponse({"error": "forbidden"}, status_code=403)
+
+    results = {}
+
+    # ── 1. Seed user-side menu items into MongoDB ─────────────────────────────
+    try:
+        from backend.mongo import get_menu_collection, get_db as get_user_db
+        from backend.seed import seed_menu_items as _seed_menu
+        from backend.db import db as flask_db
+        with flask_app.app_context():
+            flask_db.create_all()
+            _seed_menu(flask_db.session)
+            flask_db.session.commit()
+
+        # Mirror SQLite menu → MongoDB so User frontend can read it
+        from backend.models import MenuItem
+        menu_col = get_menu_collection()
+        count = 0
+        with flask_app.app_context():
+            items = MenuItem.query.all()
+            for item in items:
+                doc = {
+                    "id": item.id, "name": item.name,
+                    "description": item.description or "",
+                    "price": item.price,
+                    "image": item.image or "",
+                    "isVeg": bool(item.is_veg),
+                    "category": item.category or "",
+                    "available": bool(item.available),
+                    "popular": bool(item.popular),
+                    "todaysSpecial": bool(getattr(item, 'todays_special', False)),
+                    "calories": item.calories or 0,
+                    "prepTime": item.prep_time or "",
+                    "offer": item.offer,
+                }
+                menu_col.update_one({"id": doc["id"]}, {"$setOnInsert": doc}, upsert=True)
+                count += 1
+        results["menu_items"] = f"seeded {count} items"
+    except Exception as exc:
+        results["menu_items"] = f"ERROR: {exc}"
+
+    # ── 2. Seed admin staff into MongoDB via admin_sub seed endpoint ──────────
+    try:
+        import httpx
+        port = os.getenv("PORT", "10000")
+        resp = httpx.post(f"http://localhost:{port}/api/admin/seed?secret={expected}", timeout=10)
+        results["admin_seed"] = resp.json()
+    except Exception as exc:
+        results["admin_seed"] = f"skipped: {exc}"
+
+    return JSONResponse({"ok": True, "results": results})
+
+
 routes = [
     # Health check endpoints (must be first - most specific)
     Route("/health", root_health),
     Route("/api/health", root_health),
+    Route("/api/seed", api_seed, methods=["GET", "POST"]),
     # Admin FastAPI — mounted at /api/admin (most specific API path first)
     Mount("/api/admin", app=admin_sub),
     # User Flask  — mounted at /api
@@ -238,6 +328,72 @@ app = CORSMiddleware(Starlette(debug=False, routes=routes))
 
 print("[server.py] ✓ CORS middleware configured (custom ASGI, covers WSGI mounts)")
 print(f"[server.py] ✓ Application ready - waiting for requests...")
+
+
+# ── 6. Auto-seed on first startup ────────────────────────────────────────────
+# Seeds menu items into MongoDB and creates default admin staff accounts.
+# Runs in a background thread so the server is ready immediately.
+import threading as _threading
+
+def _auto_seed():
+    import time, sys as _sys
+    time.sleep(8)  # wait for MongoDB connections to settle
+    try:
+        # Mirror SQLite menu items to MongoDB
+        from backend.mongo import get_menu_collection
+        from backend.models import MenuItem
+        from backend.db import db as flask_db
+
+        menu_col = get_menu_collection()
+        existing = menu_col.count_documents({})
+        if existing == 0:
+            with flask_app.app_context():
+                flask_db.create_all()
+                # Run seed if table is empty
+                items = MenuItem.query.all()
+                if not items:
+                    from backend.seed import seed_menu_items, seed_offers, seed_tables, seed_notifications
+                    seed_menu_items(flask_db.session)
+                    seed_offers(flask_db.session)
+                    seed_tables(flask_db.session)
+                    seed_notifications(flask_db.session)
+                    flask_db.session.commit()
+                    items = MenuItem.query.all()
+
+                count = 0
+                for item in items:
+                    doc = {
+                        "id": item.id, "name": item.name,
+                        "description": item.description or "",
+                        "price": item.price, "image": item.image or "",
+                        "isVeg": bool(item.is_veg), "category": item.category or "",
+                        "available": bool(item.available), "popular": bool(item.popular),
+                        "todaysSpecial": bool(getattr(item, 'todays_special', False)),
+                        "calories": item.calories or 0,
+                        "prepTime": item.prep_time or "", "offer": item.offer,
+                    }
+                    menu_col.update_one({"id": doc["id"]}, {"$setOnInsert": doc}, upsert=True)
+                    count += 1
+            print(f"[auto-seed] ✓ Seeded {count} menu items into MongoDB")
+        else:
+            print(f"[auto-seed] MongoDB already has {existing} menu items — skipping seed")
+    except Exception as exc:
+        print(f"[auto-seed] menu seed error: {exc}")
+
+    # Seed admin staff via the admin sub seed endpoint
+    if _admin_ok:
+        try:
+            import httpx
+            port = os.getenv("PORT", "10000")
+            secret = os.getenv("SEED_SECRET", "seed123")
+            r = httpx.post(f"http://localhost:{port}/api/admin/seed?secret={secret}", timeout=15)
+            data = r.json()
+            print(f"[auto-seed] admin staff seed: created={data.get('created', '?')} errors={data.get('errors', [])}")
+        except Exception as exc:
+            print(f"[auto-seed] admin staff seed error: {exc}")
+
+
+_threading.Thread(target=_auto_seed, daemon=True, name="auto-seed").start()
 
 
 if __name__ == "__main__":
