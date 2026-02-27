@@ -367,10 +367,14 @@ def seed_menu_items(session):
     for item in items:
         session.merge(item)
 
-    menu = get_menu_collection()
-    for item in items:
-        doc = _menu_item_doc(item)
-        menu.update_one({"id": doc["id"]}, {"$set": doc}, upsert=True)
+    # Sync to MongoDB only if available — silently skip if not connected
+    try:
+        menu = get_menu_collection()
+        for item in items:
+            doc = _menu_item_doc(item)
+            menu.update_one({"id": doc["id"]}, {"$set": doc}, upsert=True)
+    except Exception as exc:
+        print(f"[seed] MongoDB sync skipped (SQLite only): {exc}")
 
 
 def seed_offers(session):
