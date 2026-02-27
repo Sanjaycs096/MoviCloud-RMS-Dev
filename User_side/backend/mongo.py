@@ -8,6 +8,21 @@ from dotenv import load_dotenv
 
 from pymongo import MongoClient
 
+# ── Force dnspython to use public DNS for SRV resolution ──────────────────────
+# pymongo uses dnspython to resolve mongodb+srv:// SRV records.
+# Local/corporate DNS servers often time out on Atlas SRV lookups.
+# Motor (Admin side) uses asyncio DNS which goes through the OS resolver and
+# works fine — we fix the User side pymongo to use the same public resolvers.
+try:
+    import dns.resolver as _dns_resolver
+    _r = _dns_resolver.Resolver(configure=False)
+    _r.nameservers = ["8.8.8.8", "1.1.1.1", "8.8.4.4"]
+    _r.timeout = 5
+    _r.lifetime = 10
+    _dns_resolver.default_resolver = _r
+except Exception:
+    pass  # dnspython not installed or already fine — carry on
+
 # ── Load .env: try local backend/.env first, then Admin_side/.env as fallback (dev only) ──
 # On Render, MONGODB_URI must be set as an environment variable in the dashboard.
 _local_env = Path(__file__).resolve().parent / ".env"
@@ -51,9 +66,9 @@ def _get_client() -> Optional[MongoClient]:
     try:
         client = MongoClient(
             MONGO_URI,
-            serverSelectionTimeoutMS=3000,
-            connectTimeoutMS=3000,
-            socketTimeoutMS=5000,
+            serverSelectionTimeoutMS=10000,
+            connectTimeoutMS=10000,
+            socketTimeoutMS=10000,
         )
         # Test connection — raises if unreachable within the timeout
         client.server_info()
