@@ -91,7 +91,6 @@ from starlette.applications import Starlette          # noqa: E402
 from starlette.middleware.wsgi import WSGIMiddleware   # noqa: E402
 from starlette.routing import Mount, Route             # noqa: E402
 from starlette.responses import JSONResponse           # noqa: E402
-import re as _re                                       # noqa: E402
 
 
 async def root_health(request):
@@ -234,33 +233,27 @@ _CORS_ALLOW_METHODS = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
 _CORS_ALLOW_HEADERS = "Content-Type, Authorization, X-Requested-With, Accept, x-user-id, x-user-name"
 _CORS_MAX_AGE = "86400"
 
-# Origin pattern: allow any onrender.com subdomain + localhost dev
-_CORS_ORIGIN_RE = _re.compile(
-    r"^(https?://(?:[\w-]+\.)?onrender\.com|https?://(?:[\w-]+\.)?vercel\.app"
-    r"|http://localhost(?::\d+)?|http://127\.0\.0\.1(?::\d+)?)$"
-)
+# CORS headers injected on EVERY response — wildcard is safe because
+# the frontend uses Authorization header (not cookies), so credentials=false.
+_CORS_HEADERS = [
+    (b"access-control-allow-origin",  b"*"),
+    (b"access-control-allow-methods", _CORS_ALLOW_METHODS.encode()),
+    (b"access-control-allow-headers", _CORS_ALLOW_HEADERS.encode()),
+    (b"access-control-max-age",       _CORS_MAX_AGE.encode()),
+]
 
-# Also accept any origin explicitly listed in env
-_CORS_EXPLICIT = set(
-    o.strip()
-    for o in os.getenv("CORS_ORIGINS", "").split(",")
-    if o.strip()
-)
-
-
-def _cors_origin(origin: str | None) -> str | None:
-    """Return the origin to echo back, or None if not allowed."""
-    if not origin:
-        return None
-    if origin in _CORS_EXPLICIT:
-        return origin
-    if _CORS_ORIGIN_RE.match(origin):
-        return origin
-    return None
+_CORS_STRIP = {
+    b"access-control-allow-origin",
+    b"access-control-allow-credentials",
+    b"access-control-allow-methods",
+    b"access-control-allow-headers",
+    b"access-control-expose-headers",
+}
 
 
 class CORSMiddleware:
-    """Minimal ASGI CORS middleware that works with WSGI mounts."""
+    """Minimal ASGI CORS middleware — injects Access-Control-Allow-Origin: *
+    on every response, including errors and WSGI-mounted Flask routes."""
 
     def __init__(self, app_):
         self.app = app_
@@ -270,57 +263,45 @@ class CORSMiddleware:
             await self.app(scope, receive, send)
             return
 
-        headers = dict(scope.get("headers", []))
-        origin = (headers.get(b"origin") or b"").decode()
-        allowed_origin = _cors_origin(origin) if origin else None
-
-        if scope["type"] == "http" and scope["method"] == "OPTIONS" and allowed_origin:
-            # Respond to preflight immediately — never forward to Flask/FastAPI
-            response_headers = [
-                (b"access-control-allow-origin",     allowed_origin.encode()),
-                (b"access-control-allow-methods",    _CORS_ALLOW_METHODS.encode()),
-                (b"access-control-allow-headers",    _CORS_ALLOW_HEADERS.encode()),
-                (b"access-control-allow-credentials", b"true"),
-                (b"access-control-max-age",           _CORS_MAX_AGE.encode()),
-                (b"vary",                             b"Origin"),
-                (b"content-length",                  b"0"),
-            ]
-            await send({"type": "http.response.start", "status": 204, "headers": response_headers})
-            await send({"type": "http.response.body",  "body": b"", "more_body": False})
+        # Respond to OPTIONS preflight immediately — do NOT forward to Flask/FastAPI
+        if scope["type"] == "http" and scope["method"] == "OPTIONS":
+            await send({
+                "type": "http.response.start",
+                "status": 204,
+                "headers": _CORS_HEADERS + [(b"content-length", b"0")],
+            })
+            await send({"type": "http.response.body", "body": b"", "more_body": False})
             return
 
-        # For non-OPTIONS we forward to the app, then inject CORS headers
-        if not allowed_origin:
-            await self.app(scope, receive, send)
-            return
-
-        cors_headers_to_inject = [
-            (b"access-control-allow-origin",      allowed_origin.encode()),
-            (b"access-control-allow-credentials", b"true"),
-            (b"vary",                             b"Origin"),
-        ]
+        _headers_sent = False
 
         async def send_with_cors(message):
+            nonlocal _headers_sent
             if message["type"] == "http.response.start":
-                # Strip any CORS headers already set downstream (Flask-CORS, FastAPI) to avoid duplicates
-                clean = [
-                    (k, v) for k, v in message.get("headers", [])
-                    if k.lower() not in (
-                        b"access-control-allow-origin",
-                        b"access-control-allow-credentials",
-                        b"access-control-allow-methods",
-                        b"access-control-allow-headers",
-                        b"access-control-expose-headers",
-                    )
-                ]
-                message = {**message, "headers": clean + cors_headers_to_inject}
+                _headers_sent = True
+                # Remove any CORS headers set downstream to avoid duplicates
+                clean = [(k, v) for k, v in message.get("headers", [])
+                         if k.lower() not in _CORS_STRIP]
+                message = {**message, "headers": clean + _CORS_HEADERS}
             await send(message)
 
         try:
             await self.app(scope, receive, send_with_cors)
-        except Exception:
-            # If the inner app raised (unhandled 500), we still need to ensure
-            # the CORS headers were injected.  Re-raise so uvicorn handles it.
+        except Exception as exc:
+            # Inner app crashed — send a 500 with CORS headers so the
+            # browser at least gets the error (not an opaque network failure)
+            if not _headers_sent:
+                import json as _json
+                body = _json.dumps({"error": "Internal server error"}).encode()
+                await send({
+                    "type": "http.response.start",
+                    "status": 500,
+                    "headers": _CORS_HEADERS + [
+                        (b"content-type", b"application/json"),
+                        (b"content-length", str(len(body)).encode()),
+                    ],
+                })
+                await send({"type": "http.response.body", "body": body, "more_body": False})
             raise
 
 
