@@ -16,19 +16,17 @@ services:
     runtime: python
     plan: free
     region: oregon
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    buildCommand: pip install --upgrade pip && pip install -r backend/requirements.txt
     startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 75
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.0"
       - key: MONGODB_URI
-        sync: false
+        value: mongodb+srv://priyadharshini:Ezhilithanya@cluster0.crvutrr.mongodb.net/restaurant_db
       - key: CORS_ORIGINS
         value: "https://rms-dev.onrender.com,https://rms-frontend.onrender.com,http://localhost:5174,http://127.0.0.1:5174"
       - key: FLASK_ENV
         value: production
-      - key: API_PREFIX
-        value: ""
     healthCheckPath: /health
     autoDeploy: true
 
