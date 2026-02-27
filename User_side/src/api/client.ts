@@ -2,10 +2,9 @@ type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
 
 export function getApiBaseUrl(): string {
   const raw = import.meta.env.VITE_API_BASE_URL as string | undefined;
-  // In production (Render/Vercel) VITE_API_BASE_URL must be set to the deployed Flask URL.
-  // Fallback to localhost only for local dev.
-  const fallback = import.meta.env.PROD ? "" : "http://127.0.0.1:5000";
-  return (raw && raw.trim().length > 0 ? raw.trim() : fallback).replace(/\/+$/, "");
+  // Empty string = use Vite's proxy (/api/* → localhost:8000) for local dev.
+  // In production, VITE_API_BASE_URL is baked in via .env.production at build time.
+  return (raw && raw.trim().length > 0 ? raw.trim() : "").replace(/\/+$/, "");
 }
 
 export async function apiRequest<T>(
