@@ -218,7 +218,7 @@ export function InventoryManagement({ triggerStockManagement }: { triggerStockMa
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'https://restaurant-management-system-24c2.onrender.com/api';
+        const API_URL = import.meta.env.VITE_API_URL || 'https://rms-backend.onrender.com/api/admin';
         const response = await fetch(`${API_URL}/inventory`);
         if (response.ok) {
           const result = await response.json();

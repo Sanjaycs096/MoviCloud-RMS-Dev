@@ -39,7 +39,7 @@ export function AuditLogs() {
     setLoading(true);
     setApiError(null);
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'https://restaurant-management-system-24c2.onrender.com/api';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://rms-backend.onrender.com/api/admin';
       
       const headers = {
         'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ export function AuditLogs() {
 
   const handleExportLogs = async () => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'https://restaurant-management-system-24c2.onrender.com/api';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://rms-backend.onrender.com/api/admin';
       const response = await fetch(`${API_URL}/audit/export?format=json&limit=1000`, {
         headers: { 'Content-Type': 'application/json' },
         signal: AbortSignal.timeout(5000)
