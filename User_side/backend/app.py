@@ -38,24 +38,16 @@ def create_app() -> Flask:
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    cors_origins = os.getenv("CORS_ORIGINS", "https://rms-dev.onrender.com,http://localhost:5174")
-    
-    # Parse CORS origins - if "*" is present, allow all (but can't use credentials)
-    if "*" in cors_origins:
-        origins = "*"
-        supports_credentials = False
-    else:
-        origins = [o.strip() for o in cors_origins.split(",") if o.strip()]
-        supports_credentials = True
-    
-    # Apply CORS to all routes
+    # CORS is handled by the outer Starlette ASGI middleware in server.py.
+    # Flask-CORS is kept here for local dev only (when running Flask directly).
+    # In production (Render), the ASGI layer strips and re-injects CORS headers,
+    # so we use "*" here to avoid duplicate/conflicting header issues.
     CORS(
-        app, 
-        resources={r"/*": {"origins": origins}},
-        supports_credentials=supports_credentials,
+        app,
+        resources={r"/*": {"origins": "*"}},
+        supports_credentials=False,
         allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
         methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        expose_headers=["Content-Type", "Authorization"]
     )
 
     db.init_app(app)
