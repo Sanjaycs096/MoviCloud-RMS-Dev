@@ -106,22 +106,52 @@ def serialize_menu_item(doc: dict) -> dict:
     }
 
 
-@menu_bp.get("/menu-items")
-def list_menu_items():
-    category = request.args.get("category")
-    veg = request.args.get("veg")  # 'true'|'false'
-    q = request.args.get("q")
+def _get_sqlite_items() -> list:
+    """
+    Read menu items from SQLite (seeds the table first if empty).
+    Returns list of plain dicts — same shape as MongoDB documents.
+    Safe to call inside any Flask request context.
+    """
+    from ..db import db as flask_db
+    from ..models import MenuItem
 
-    menu = get_menu_collection()
+    flask_db.create_all()
+    items = MenuItem.query.all()
+    if not items:
+        from ..seed import seed_menu_items, seed_offers, seed_tables
+        seed_menu_items(flask_db.session)
+        seed_offers(flask_db.session)
+        seed_tables(flask_db.session)
+        flask_db.session.commit()
+        items = MenuItem.query.all()
+
+    return [
+        {
+            "id": item.id,
+            "name": item.name,
+            "description": item.description or "",
+            "price": item.price,
+            "image": item.image or "",
+            "isVeg": bool(item.is_veg),
+            "category": item.category or "",
+            "available": bool(item.available),
+            "popular": bool(item.popular),
+            "todaysSpecial": bool(getattr(item, "todays_special", False)),
+            "calories": item.calories or 0,
+            "prepTime": item.prep_time or "",
+            "offer": item.offer,
+        }
+        for item in items
+    ]
+
+
+def _build_mongo_query(category, veg, q) -> dict:
     query: dict = {}
-
     if category and category != "All":
         query["category"] = category
-
     if veg in ("true", "false"):
         want_veg = veg == "true"
         if want_veg:
-            # Accept items that are veg by either old isVeg bool OR admin dietType
             query["$or"] = [
                 {"isVeg": True},
                 {"dietType": {"$in": list(_VEG_DIET_TYPES)}},
@@ -131,7 +161,6 @@ def list_menu_items():
                 {"isVeg": {"$ne": True}},
                 {"dietType": {"$nin": list(_VEG_DIET_TYPES)}},
             ]
-
     if q:
         regex = re.compile(re.escape(q), re.IGNORECASE)
         q_clause = {"$or": [{"name": regex}, {"description": regex}]}
@@ -141,31 +170,110 @@ def list_menu_items():
             query = {"$and": [{"$or": query.pop("$or")}, q_clause]}
         else:
             query.update(q_clause)
+    return query
 
-    items = list(menu.find(query).sort([("category", 1), ("name", 1)]))
-    return json_response({"items": [serialize_menu_item(i) for i in items]})
+
+def _apply_sqlite_filters(docs: list, category, veg, q) -> list:
+    if category and category != "All":
+        docs = [d for d in docs if d.get("category") == category]
+    if veg == "true":
+        docs = [d for d in docs if d.get("isVeg")]
+    elif veg == "false":
+        docs = [d for d in docs if not d.get("isVeg")]
+    if q:
+        ql = q.lower()
+        docs = [
+            d for d in docs
+            if ql in (d.get("name") or "").lower()
+            or ql in (d.get("description") or "").lower()
+        ]
+    return sorted(docs, key=lambda d: (d.get("category") or "", d.get("name") or ""))
+
+
+@menu_bp.get("/menu-items")
+def list_menu_items():
+    category = request.args.get("category")
+    veg = request.args.get("veg")   # 'true'|'false'
+    q = request.args.get("q")
+
+    # ── 1. Try MongoDB ─────────────────────────────────────────────────────────
+    try:
+        menu = get_menu_collection()
+        query = _build_mongo_query(category, veg, q)
+        items = list(menu.find(query).sort([("category", 1), ("name", 1)]))
+
+        # Collection is empty on an unfiltered request → auto-seed from SQLite
+        if not items and not query:
+            try:
+                sqlite_docs = _get_sqlite_items()
+                for doc in sqlite_docs:
+                    menu.update_one({"id": doc["id"]}, {"$setOnInsert": doc}, upsert=True)
+                print(f"[menu] ✓ Auto-seeded {len(sqlite_docs)} items into MongoDB")
+                items = list(menu.find({}).sort([("category", 1), ("name", 1)]))
+            except Exception as seed_exc:
+                print(f"[menu] MongoDB seed error (will use SQLite fallback): {seed_exc}")
+
+        if items:
+            return json_response({"items": [serialize_menu_item(i) for i in items]})
+
+    except Exception as mongo_exc:
+        print(f"[menu] MongoDB unavailable, using SQLite fallback: {mongo_exc}")
+
+    # ── 2. SQLite fallback (always works) ──────────────────────────────────────
+    try:
+        sqlite_docs = _get_sqlite_items()
+        filtered = _apply_sqlite_filters(sqlite_docs, category, veg, q)
+        print(f"[menu] Serving {len(filtered)} items from SQLite fallback")
+        return json_response({"items": [serialize_menu_item(d) for d in filtered]})
+    except Exception as sqlite_exc:
+        print(f"[menu] SQLite fallback failed: {sqlite_exc}")
+        return json_response({"items": [], "error": "Menu service temporarily unavailable"}, 503)
 
 
 @menu_bp.get("/menu-items/<item_id>")
 def get_menu_item(item_id: str):
-    menu = get_menu_collection()
-    # Try string id first, then ObjectId
-    item = menu.find_one({"id": item_id})
-    if not item:
-        try:
-            from bson import ObjectId
-            item = menu.find_one({"_id": ObjectId(item_id)})
-        except Exception:
-            pass
-    if not item:
-        return json_response({"error": "not_found"}, 404)
-    return json_response(serialize_menu_item(item))
+    # Try MongoDB first
+    try:
+        menu = get_menu_collection()
+        item = menu.find_one({"id": item_id})
+        if not item:
+            try:
+                from bson import ObjectId
+                item = menu.find_one({"_id": ObjectId(item_id)})
+            except Exception:
+                pass
+        if item:
+            return json_response(serialize_menu_item(item))
+    except Exception:
+        pass
+
+    # SQLite fallback
+    try:
+        sqlite_docs = _get_sqlite_items()
+        item = next((d for d in sqlite_docs if d.get("id") == item_id), None)
+        if item:
+            return json_response(serialize_menu_item(item))
+    except Exception:
+        pass
+
+    return json_response({"error": "not_found"}, 404)
 
 
 @menu_bp.get("/menu/categories")
 def list_categories():
-    """Return all distinct categories present in the menu_items collection."""
-    menu = get_menu_collection()
-    cats = sorted(c for c in menu.distinct("category") if c)
-    # Always prepend "All" so the frontend category bar works without changes
-    return json_response({"categories": ["All", *cats]})
+    """Return all distinct categories — falls back to SQLite if MongoDB is empty/unavailable."""
+    try:
+        menu = get_menu_collection()
+        cats = sorted(c for c in menu.distinct("category") if c)
+        if cats:
+            return json_response({"categories": ["All", *cats]})
+    except Exception as exc:
+        print(f"[menu] categories: MongoDB unavailable: {exc}")
+
+    # SQLite fallback
+    try:
+        from ..models import MenuItem
+        cats = sorted(set(i.category for i in MenuItem.query.all() if i.category))
+        return json_response({"categories": ["All", *cats]})
+    except Exception:
+        return json_response({"categories": ["All"]})
