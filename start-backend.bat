@@ -4,13 +4,13 @@ echo   MOVICLOUD RMS - Starting Backend
 echo ========================================
 echo.
 
-cd /d "%~dp0backend"
+cd /d "%~dp0"
 
 echo Checking for Python virtual environment...
-if not exist "venv\" (
+if not exist "backend\venv\" (
     echo.
     echo Virtual environment not found. Creating one...
-    py -m venv venv
+    py -m venv backend\venv
     if errorlevel 1 (
         echo.
         echo ERROR: Failed to create virtual environment!
@@ -21,12 +21,12 @@ if not exist "venv\" (
 )
 
 echo Activating virtual environment...
-call venv\Scripts\activate.bat
+call backend\venv\Scripts\activate.bat
 
 echo.
 echo Installing/Updating dependencies...
 py -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r backend\requirements.txt
 
 echo.
 echo ========================================
@@ -43,6 +43,6 @@ echo.
 echo Press Ctrl+C to stop the server
 echo.
 
-py -m uvicorn server:app --reload --host 127.0.0.1 --port 8000
+py -m uvicorn server:app --reload --reload-dir . --host 127.0.0.1 --port 8000
 
 pause
