@@ -1,3 +1,21 @@
 ﻿
-# Root package.json excluded — prevents Render from auto-detecting as Node.js
-package.json
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyd
+.env
+venv/
+.venv/
+env/
+*.egg-info/
+.eggs/
+dist/
+build/
+*.pyc
+
+# --- Node ---
+node_modules/
+
+# --- OS ---
+.DS_Store
+Thumbs.db

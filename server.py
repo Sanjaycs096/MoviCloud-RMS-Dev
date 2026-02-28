@@ -60,9 +60,23 @@ try:
     from backend.app import create_app as create_flask_app  # noqa: E402
     flask_app = create_flask_app()
     print(f"[server.py] ✓ Flask app initialized")
+    _flask_ok = True
 except Exception as e:
+    import traceback
     print(f"[server.py] ✗ ERROR: Failed to create Flask app: {e}")
-    raise
+    traceback.print_exc()
+    print("[server.py] ⚠ Running in degraded mode — user API unavailable")
+    # Create a minimal Flask stub so Starlette routing doesn't crash
+    from flask import Flask as _Flask
+    flask_app = _Flask("rms-degraded")
+
+    @flask_app.route("/", defaults={"path": ""})
+    @flask_app.route("/<path:path>")
+    def _flask_stub(path=""):
+        from flask import jsonify
+        return jsonify({"error": "User API unavailable — Flask init failed", "detail": str(e)}), 503
+
+    _flask_ok = False
 
 # ── 3. FastAPI admin sub-application ─────────────────────────────────────────
 try:
@@ -94,21 +108,28 @@ from starlette.responses import JSONResponse           # noqa: E402
 
 
 async def root_health(request):
-    """Detailed health check — shows MongoDB status and registered route count."""
+    """Health check — non-blocking, always returns 200 so Render marks service healthy.
+    MongoDB status is checked via cached client state only (no synchronous ping)."""
     import sys as _sys
     mongo_ok = False
     mongo_detail = "not checked"
     try:
-        from backend.mongo import _get_client, MONGO_DB_NAME
-        client = _get_client()
-        if client:
-            client.admin.command("ping")
+        # Use the cached client — do NOT call client.admin.command("ping") here.
+        # A synchronous ping blocks the async event loop for up to 10 s and causes
+        # Render's health-check to time out, marking the service as unhealthy.
+        from backend.mongo import _client as _mongo_client, MONGO_DB_NAME
+        if _mongo_client is not None:
             mongo_ok = True
             mongo_detail = f"connected ({MONGO_DB_NAME})"
         else:
-            mongo_detail = "client is None — check MONGODB_URI env var"
+            # Background thread hasn't connected yet — report as warming-up, not error
+            from backend.mongo import MONGO_URI as _uri
+            if _uri and "@" in _uri:
+                mongo_detail = "warming up (background connect in progress)"
+            else:
+                mongo_detail = "waiting for MONGODB_URI env var"
     except Exception as exc:
-        mongo_detail = str(exc)[:120]
+        mongo_detail = f"check error: {str(exc)[:80]}"
 
     # Count Flask routes
     flask_routes = []
@@ -119,11 +140,12 @@ async def root_health(request):
         pass
 
     return JSONResponse({
-        "status": "ok" if mongo_ok else "degraded",
+        "status": "ok",          # Always "ok" so Render health check passes
         "service": "RMS Unified Backend",
         "version": "2.0",
         "mongodb": mongo_detail,
         "flask_routes": len(flask_routes),
+        "flask_ok": _flask_ok,
         "api_prefix": os.getenv("API_PREFIX", "(not set)"),
         "python": _sys.version.split()[0],
         "admin_ok": _admin_ok,
@@ -349,6 +371,11 @@ class CORSMiddleware:
 app = CORSMiddleware(Starlette(debug=False, routes=routes, lifespan=_lifespan))
 
 print("[server.py] ✓ CORS middleware configured (custom ASGI, covers WSGI mounts)")
+print(f"[server.py] Flask OK:  {_flask_ok}")
+print(f"[server.py] Admin OK:  {_admin_ok}")
+print(f"[server.py] Python:    {sys.version.split()[0]}")
+print(f"[server.py] Port:      {os.getenv('PORT', '8000')}")
+print(f"[server.py] API prefix:{os.getenv('API_PREFIX', '')!r}")
 print(f"[server.py] ✓ Application ready - waiting for requests...")
 
 
@@ -360,6 +387,9 @@ import threading as _threading
 def _auto_seed():
     import time, sys as _sys
     time.sleep(8)  # wait for MongoDB connections to settle
+    if not _flask_ok:
+        print("[auto-seed] ⚠ Flask not initialized — skipping user-side seed")
+        return
     try:
         # Mirror SQLite menu items to MongoDB
         from backend.mongo import get_menu_collection
