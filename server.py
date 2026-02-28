@@ -124,6 +124,7 @@ async def root_health(request):
         "version": "2.0",
         "mongodb": mongo_detail,
         "flask_routes": len(flask_routes),
+        "api_prefix": os.getenv("API_PREFIX", "(not set)"),
         "python": _sys.version.split()[0],
         "admin_ok": _admin_ok,
     }, status_code=200)  # Always 200 so Render health check passes
@@ -136,6 +137,20 @@ async def dev_root(request):
         "frontend": "Not built - use separate dev server",
         "api_docs_admin": "/api/admin/docs",
     })
+
+
+async def api_routes(request):
+    """GET /api/debug/routes — list all registered Flask routes (for diagnostics)."""
+    flask_routes = []
+    try:
+        for rule in sorted(flask_app.url_map.iter_rules(), key=lambda r: r.rule):
+            flask_routes.append({
+                "path": rule.rule,
+                "methods": sorted(rule.methods - {"OPTIONS", "HEAD"}),
+            })
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+    return JSONResponse({"flask_routes": flask_routes, "count": len(flask_routes)})
 
 
 async def api_seed(request):
@@ -201,6 +216,7 @@ routes = [
     Route("/health", root_health),
     Route("/api/health", root_health),
     Route("/api/seed", api_seed, methods=["GET", "POST"]),
+    Route("/api/debug/routes", api_routes),
     # Admin FastAPI — mounted at /api/admin (most specific API path first)
     Mount("/api/admin", app=admin_sub),
     # User Flask  — mounted at /api
