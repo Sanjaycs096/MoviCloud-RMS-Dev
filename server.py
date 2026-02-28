@@ -175,6 +175,22 @@ async def api_routes(request):
     return JSONResponse({"flask_routes": flask_routes, "count": len(flask_routes)})
 
 
+async def debug_startup(request):
+    """GET /debug — raw startup diagnostics with NO dependencies, always 200."""
+    import sys as _sys, os as _os
+    info = {
+        "status": "running",
+        "python": _sys.version,
+        "cwd": _os.getcwd(),
+        "path": _sys.path[:5],
+        "flask_ok": _flask_ok,
+        "admin_ok": _admin_ok,
+        "env_port": _os.getenv("PORT", "(not set)"),
+        "env_mongodb_uri_set": bool(_os.getenv("MONGODB_URI")),
+    }
+    return JSONResponse(info, status_code=200)
+
+
 async def api_seed(request):
     """POST /api/seed — seeds MongoDB with menu items and admin staff."""
     secret = request.query_params.get("secret", "")
@@ -237,6 +253,7 @@ routes = [
     # Health check endpoints (must be first - most specific)
     Route("/health", root_health),
     Route("/api/health", root_health),
+    Route("/debug", debug_startup),       # raw diagnostics — no MongoDB dependency
     Route("/api/seed", api_seed, methods=["GET", "POST"]),
     Route("/api/debug/routes", api_routes),
     # Admin FastAPI — mounted at /api/admin (most specific API path first)
