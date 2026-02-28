@@ -15,6 +15,10 @@ build/
 
 # --- Node ---
 node_modules/
+# Root package.json excluded so Render detects Python (not Node.js)
+/package.json
+/package-lock.json
+/render-build.sh
 
 # --- OS ---
 .DS_Store

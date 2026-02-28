@@ -1,1 +1,1 @@
-web: bash start.sh
+web: python -m uvicorn server:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 75 --timeout-graceful-shutdown 30
