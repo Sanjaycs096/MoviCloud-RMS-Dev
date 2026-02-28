@@ -245,22 +245,24 @@ from contextlib import asynccontextmanager as _asynccontextmanager
 
 @_asynccontextmanager
 async def _lifespan(app_):
-    """Eagerly connect MongoDB when the server starts so the first request
-    never hits the lazy-connection cold-start delay."""
-    import asyncio
-    loop = asyncio.get_event_loop()
+    """Fire-and-forget MongoDB pre-connect so the server is immediately ready.
+    We yield FIRST (server accepts requests) then connect in a background thread.
+    This prevents Render's health-check timeout during slow Atlas SRV resolution."""
+    import asyncio, threading
+
     def _connect():
         try:
             from backend.mongo import _get_client, MONGO_DB_NAME
             client = _get_client()
             if client:
-                print(f"[server.py] ✓ User MongoDB pre-connected at startup ({MONGO_DB_NAME})")
+                print(f"[server.py] ✓ User MongoDB pre-connected ({MONGO_DB_NAME})")
             else:
-                print("[server.py] ⚠ User MongoDB not yet available at startup — will retry on first request")
+                print("[server.py] ⚠ User MongoDB not ready at startup — will retry on first request")
         except Exception as exc:
-            print(f"[server.py] ⚠ User MongoDB startup connect error: {exc}")
-    await loop.run_in_executor(None, _connect)
-    yield  # server is running
+            print(f"[server.py] ⚠ User MongoDB startup error: {exc}")
+
+    threading.Thread(target=_connect, daemon=True, name="mongo-preconnect").start()
+    yield  # server starts accepting requests IMMEDIATELY — no blocking wait
 
 # ── 5. Custom CORS middleware ────────────────────────────────────────────────
 #
