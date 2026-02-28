@@ -223,6 +223,29 @@ else:
     # Development: Simple root endpoint
     routes.insert(0, Route("/", dev_root))
 
+
+# ── Lifespan: eagerly connect MongoDB at startup ──────────────────────────────
+from contextlib import asynccontextmanager as _asynccontextmanager
+
+@_asynccontextmanager
+async def _lifespan(app_):
+    """Eagerly connect MongoDB when the server starts so the first request
+    never hits the lazy-connection cold-start delay."""
+    import asyncio
+    loop = asyncio.get_event_loop()
+    def _connect():
+        try:
+            from backend.mongo import _get_client, MONGO_DB_NAME
+            client = _get_client()
+            if client:
+                print(f"[server.py] ✓ User MongoDB pre-connected at startup ({MONGO_DB_NAME})")
+            else:
+                print("[server.py] ⚠ User MongoDB not yet available at startup — will retry on first request")
+        except Exception as exc:
+            print(f"[server.py] ⚠ User MongoDB startup connect error: {exc}")
+    await loop.run_in_executor(None, _connect)
+    yield  # server is running
+
 # ── 5. Custom CORS middleware ────────────────────────────────────────────────
 #
 # Starlette's built-in CORSMiddleware cannot introspect routes inside a
@@ -305,7 +328,7 @@ class CORSMiddleware:
             raise
 
 
-app = CORSMiddleware(Starlette(debug=False, routes=routes))
+app = CORSMiddleware(Starlette(debug=False, routes=routes, lifespan=_lifespan))
 
 print("[server.py] ✓ CORS middleware configured (custom ASGI, covers WSGI mounts)")
 print(f"[server.py] ✓ Application ready - waiting for requests...")

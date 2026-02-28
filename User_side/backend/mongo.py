@@ -23,14 +23,17 @@ try:
 except Exception:
     pass  # dnspython not installed or already fine — carry on
 
-# ── Load .env: try local backend/.env first, then Admin_side/.env as fallback (dev only) ──
+# ── Load .env: try local backend/.env first, then Admin_side/.env, then repo root ──
 # On Render, MONGODB_URI must be set as an environment variable in the dashboard.
 _local_env = Path(__file__).resolve().parent / ".env"
 _admin_env = Path(__file__).resolve().parents[2] / "Admin_side" / "backend" / ".env"
+_root_env  = Path(__file__).resolve().parents[2] / ".env"
 if _local_env.exists():
     load_dotenv(dotenv_path=_local_env)
 elif _admin_env.exists():
     load_dotenv(dotenv_path=_admin_env)
+elif _root_env.exists():
+    load_dotenv(dotenv_path=_root_env)
 else:
     load_dotenv()  # Let python-dotenv search standard locations
 
@@ -49,7 +52,10 @@ MONGO_DB_NAME = MONGO_URI.rstrip("/").rsplit("/", 1)[-1].split("?")[0].strip()
 
 _client: Optional[MongoClient] = None
 _client_failed_at: float = 0.0          # timestamp of last connection failure
-_CLIENT_RETRY_INTERVAL = 30.0           # seconds before retrying a failed connection
+# On Render (production) the DNS/network is fine — use a short retry.
+# Locally the corporate DNS times out for Atlas SRV; the dnspython override above
+# fixes it, but we keep a modest 10s window so we don't hammer a truly dead host.
+_CLIENT_RETRY_INTERVAL = 10.0           # seconds before retrying a failed connection
 
 
 def _get_client() -> Optional[MongoClient]:
