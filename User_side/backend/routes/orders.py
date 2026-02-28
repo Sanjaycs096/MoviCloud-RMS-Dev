@@ -35,26 +35,34 @@ def serialize_order(doc: dict) -> dict:
 @orders_bp.get("/orders")
 def list_orders():
     user_id = request.args.get("userId")
-    orders = get_orders_collection()
-    query = {"userId": user_id} if user_id else {}
-    rows = list(orders.find(query).sort([("date", -1)]))
-    return json_response({"orders": [serialize_order(o) for o in rows]})
+    try:
+        orders = get_orders_collection()
+        query = {"userId": user_id} if user_id else {}
+        rows = list(orders.find(query).sort([("date", -1)]))
+        return json_response({"orders": [serialize_order(o) for o in rows]})
+    except Exception as exc:
+        print(f"[orders] MongoDB unavailable: {exc}")
+        return json_response({"orders": []})
 
 
 @orders_bp.get("/orders/<order_id>")
 def get_order(order_id: str):
-    orders = get_orders_collection()
-    o = orders.find_one({"id": order_id})
-    if not o:
-        # Also try ObjectId lookup for admin-created orders
-        try:
-            from bson import ObjectId
-            o = orders.find_one({"_id": ObjectId(order_id)})
-        except Exception:
-            pass
-    if not o:
-        return json_response({"error": "not_found"}, 404)
-    return json_response(serialize_order(o))
+    try:
+        orders = get_orders_collection()
+        o = orders.find_one({"id": order_id})
+        if not o:
+            # Also try ObjectId lookup for admin-created orders
+            try:
+                from bson import ObjectId
+                o = orders.find_one({"_id": ObjectId(order_id)})
+            except Exception:
+                pass
+        if not o:
+            return json_response({"error": "not_found"}, 404)
+        return json_response(serialize_order(o))
+    except Exception as exc:
+        print(f"[orders] get_order error: {exc}")
+        return json_response({"error": "db_unavailable"}, 503)
 
 
 @orders_bp.post("/orders")
@@ -90,29 +98,37 @@ def create_order():
         "updatedAt": utc_now(),
     }
 
-    orders = get_orders_collection()
-    orders.update_one({"id": doc["id"]}, {"$set": doc}, upsert=True)
+    try:
+        orders = get_orders_collection()
+        orders.update_one({"id": doc["id"]}, {"$set": doc}, upsert=True)
+    except Exception as exc:
+        print(f"[orders] create_order MongoDB error: {exc}")
+        return json_response({"error": "db_unavailable"}, 503)
 
     return json_response(serialize_order(doc), 201)
 
 
 @orders_bp.patch("/orders/<order_id>")
 def update_order(order_id: str):
-    orders = get_orders_collection()
-    existing = orders.find_one({"id": order_id})
-    if not existing:
-        return json_response({"error": "not_found"}, 404)
+    try:
+        orders = get_orders_collection()
+        existing = orders.find_one({"id": order_id})
+        if not existing:
+            return json_response({"error": "not_found"}, 404)
 
-    data = get_json(request)
-    updates = {}
-    if isinstance(data.get("status"), str):
-        updates["status"] = data["status"]
-    if isinstance(data.get("invoiceUrl"), str):
-        updates["invoiceUrl"] = data["invoiceUrl"]
+        data = get_json(request)
+        updates = {}
+        if isinstance(data.get("status"), str):
+            updates["status"] = data["status"]
+        if isinstance(data.get("invoiceUrl"), str):
+            updates["invoiceUrl"] = data["invoiceUrl"]
 
-    if updates:
-        updates["updatedAt"] = utc_now()
-        orders.update_one({"id": order_id}, {"$set": updates})
-        existing.update(updates)
+        if updates:
+            updates["updatedAt"] = utc_now()
+            orders.update_one({"id": order_id}, {"$set": updates})
+            existing.update(updates)
 
-    return json_response(serialize_order(existing))
+        return json_response(serialize_order(existing))
+    except Exception as exc:
+        print(f"[orders] update_order error: {exc}")
+        return json_response({"error": "db_unavailable"}, 503)

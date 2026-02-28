@@ -2,11 +2,10 @@
   "name": "movicloud-rms",
   "version": "1.0.0",
   "private": true,
-  "description": "MoviCloud RMS – Python backend. npm scripts are Render.com Node-detection fallback.",
+  "description": "MoviCloud RMS – Python backend. See Procfile for the correct start command.",
   "scripts": {
-    "postinstall": "python3 -m pip install --upgrade pip && python3 -m pip install -r backend/requirements.txt || true",
-    "build": "python3 -m pip install --upgrade pip && python3 -m pip install -r backend/requirements.txt",
-    "start": "python3 -m uvicorn server:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 75 --timeout-graceful-shutdown 30",
+    "build": "echo 'Python service: see Procfile and render.yaml for build/start'",
+    "start": "python3 -m uvicorn server:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1 --timeout-keep-alive 75 --timeout-graceful-shutdown 30",
     "dev": "npm --prefix User_side run dev"
   },
   "engines": {
