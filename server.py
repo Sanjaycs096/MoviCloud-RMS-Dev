@@ -421,6 +421,7 @@ def _keep_alive():
 
 _threading.Thread(target=_keep_alive, daemon=True, name="keep-alive").start()
 
+if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
