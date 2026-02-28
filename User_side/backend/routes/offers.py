@@ -39,13 +39,37 @@ def _coupon_to_offer(doc: dict) -> dict:
 
 @offers_bp.get("/offers")
 def list_offers():
-    db = get_db()
-    coupons = list(
-        db.get_collection("coupons")
-        .find({"status": "active"})
-        .sort("createdAt", -1)
-    )
-    return json_response({"offers": [_coupon_to_offer(c) for c in coupons]})
+    try:
+        db = get_db()
+        coupons = list(
+            db.get_collection("coupons")
+            .find({"status": "active"})
+            .sort("createdAt", -1)
+        )
+        return json_response({"offers": [_coupon_to_offer(c) for c in coupons]})
+    except Exception as exc:
+        print(f"[offers] MongoDB unavailable: {exc}")
+        # Fall back to SQLite offers if any
+        try:
+            from ..db import db as flask_db
+            from ..models import Offer
+            flask_db.create_all()
+            items = Offer.query.all()
+            sqlite_offers = [
+                {
+                    "id": o.id,
+                    "title": o.title,
+                    "type": o.type,
+                    "value": float(o.value or 0),
+                    "minOrderValue": o.min_order_value,
+                    "requiresLoyalty": bool(o.requires_loyalty),
+                    "validUntil": None,
+                }
+                for o in items
+            ]
+            return json_response({"offers": sqlite_offers})
+        except Exception:
+            return json_response({"offers": []})
 
 
 @offers_bp.get("/offers/eligible")

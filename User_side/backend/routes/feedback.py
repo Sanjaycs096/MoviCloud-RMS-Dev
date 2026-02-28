@@ -47,8 +47,12 @@ def create_feedback():
         "createdAt": utc_now(),
     }
 
-    feedback = get_feedback_collection()
-    feedback.update_one({"id": doc["id"]}, {"$set": doc}, upsert=True)
+    try:
+        feedback = get_feedback_collection()
+        feedback.update_one({"id": doc["id"]}, {"$set": doc}, upsert=True)
+    except Exception as exc:
+        print(f"[feedback] MongoDB unavailable: {exc}")
+        return json_response({"error": "feedback_service_unavailable"}, 503)
 
     return json_response({"feedback": _serialize_feedback(doc)}, 201)
 
@@ -57,6 +61,10 @@ def create_feedback():
 def list_feedback():
     user_id = request.args.get("userId")
     query = {"userId": user_id} if user_id else {}
-    feedback = get_feedback_collection()
-    rows = list(feedback.find(query).sort([("createdAt", -1)]))
-    return json_response({"items": [_serialize_feedback(r) for r in rows]})
+    try:
+        feedback = get_feedback_collection()
+        rows = list(feedback.find(query).sort([("createdAt", -1)]))
+        return json_response({"items": [_serialize_feedback(r) for r in rows]})
+    except Exception as exc:
+        print(f"[feedback] MongoDB unavailable: {exc}")
+        return json_response({"items": []})
