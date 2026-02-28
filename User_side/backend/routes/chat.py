@@ -37,25 +37,28 @@ def chat():
     if not message:
         return json_response({"reply": "Please type a message."})
 
-    menu = get_menu_collection()
+    try:
+        menu = get_menu_collection()
 
-    # very small intent handling to keep behaviour stable
-    if "special" in message:
-        specials = list(menu.find({"todaysSpecial": True}).limit(6))
-        return json_response(
-            {
-                "reply": "Here are today's specials.",
-                "items": [_menu_item_shape(i) for i in specials],
-            }
-        )
+        # very small intent handling to keep behaviour stable
+        if "special" in message:
+            specials = list(menu.find({"todaysSpecial": True}).limit(6))
+            return json_response(
+                {
+                    "reply": "Here are today's specials.",
+                    "items": [_menu_item_shape(i) for i in specials],
+                }
+            )
 
-    if "popular" in message:
-        popular = list(menu.find({"popular": True}).limit(6))
-        return json_response(
-            {
-                "reply": "Here are some popular items.",
-                "items": [_menu_item_shape(i) for i in popular],
-            }
-        )
+        if "popular" in message:
+            popular = list(menu.find({"popular": True}).limit(6))
+            return json_response(
+                {
+                    "reply": "Here are some popular items.",
+                    "items": [_menu_item_shape(i) for i in popular],
+                }
+            )
+    except Exception:
+        pass
 
     return json_response({"reply": "I can help with menu, specials, and popular items. Try 'today specials'."})

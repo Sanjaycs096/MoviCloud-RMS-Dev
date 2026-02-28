@@ -15,14 +15,20 @@ def _get_admin_tables() -> list:
     """Return tables from the shared MongoDB 'tables' collection (managed by admin).
     Falls back to 12 default indoor tables when none are configured yet.
     """
-    db = get_db()
-    docs = list(db.get_collection("tables").find({}).sort("name", 1))
-    if not docs:
-        docs = [
+    try:
+        db = get_db()
+        docs = list(db.get_collection("tables").find({}).sort("name", 1))
+        if not docs:
+            docs = [
+                {"name": f"Table {i}", "location": "Indoor", "segment": "Main", "capacity": 4}
+                for i in range(1, 13)
+            ]
+        return docs
+    except Exception:
+        return [
             {"name": f"Table {i}", "location": "Indoor", "segment": "Main", "capacity": 4}
             for i in range(1, 13)
         ]
-    return docs
 
 
 def serialize_table(doc: dict, table_number: int) -> dict:
@@ -72,10 +78,13 @@ def list_tables():
 @reservations_bp.get("/reservations")
 def list_reservations():
     user_id = request.args.get("userId")
-    reservations = get_reservations_collection()
-    query = {"userId": user_id} if user_id else {}
-    res = list(reservations.find(query).sort([("date", -1), ("timeSlot", 1)]))
-    return json_response({"reservations": [serialize_reservation(r) for r in res]})
+    try:
+        reservations = get_reservations_collection()
+        query = {"userId": user_id} if user_id else {}
+        res = list(reservations.find(query).sort([("date", -1), ("timeSlot", 1)]))
+        return json_response({"reservations": [serialize_reservation(r) for r in res]})
+    except Exception as e:
+        return json_response({"reservations": [], "error": "db_unavailable", "detail": str(e)}, 200)
 
 
 @reservations_bp.post("/reservations")
@@ -110,23 +119,29 @@ def create_reservation():
         "updatedAt": utc_now(),
     }
 
-    reservations = get_reservations_collection()
-    reservations.update_one(
-        {"reservationId": doc["reservationId"]},
-        {"$set": doc},
-        upsert=True,
-    )
+    try:
+        reservations = get_reservations_collection()
+        reservations.update_one(
+            {"reservationId": doc["reservationId"]},
+            {"$set": doc},
+            upsert=True,
+        )
+    except Exception as e:
+        return json_response({"error": "db_unavailable", "detail": str(e)}, 503)
 
     return json_response(serialize_reservation(doc), 201)
 
 
 @reservations_bp.delete("/reservations/<reservation_id>")
 def delete_reservation(reservation_id: str):
-    reservations = get_reservations_collection()
-    result = reservations.delete_one({"reservationId": reservation_id})
-    if result.deleted_count == 0:
-        return json_response({"error": "not_found"}, 404)
-    return json_response({"ok": True})
+    try:
+        reservations = get_reservations_collection()
+        result = reservations.delete_one({"reservationId": reservation_id})
+        if result.deleted_count == 0:
+            return json_response({"error": "not_found"}, 404)
+        return json_response({"ok": True})
+    except Exception as e:
+        return json_response({"error": "db_unavailable", "detail": str(e)}, 503)
 
 
 @reservations_bp.get("/reservations/availability")
@@ -140,12 +155,15 @@ def availability():
     segment = request.args.get("segment", "any")
     guests = int(request.args.get("guests", "2"))
 
-    reservations = get_reservations_collection()
-    reserved_table_numbers = {
-        int(r.get("tableNumber", 0))
-        for r in reservations.find({"date": date, "timeSlot": time_slot}, {"tableNumber": 1})
-        if r.get("tableNumber")
-    }
+    try:
+        reservations = get_reservations_collection()
+        reserved_table_numbers = {
+            int(r.get("tableNumber", 0))
+            for r in reservations.find({"date": date, "timeSlot": time_slot}, {"tableNumber": 1})
+            if r.get("tableNumber")
+        }
+    except Exception:
+        reserved_table_numbers = set()
 
     tables = _get_admin_tables()
 
@@ -170,10 +188,13 @@ def availability():
 @reservations_bp.get("/reservation-waiting-queue")
 def list_waiting_queue():
     user_id = request.args.get("userId")
-    waiting = get_waiting_queue_collection()
-    query = {"userId": user_id} if user_id else {}
-    rows = list(waiting.find(query).sort([("date", -1), ("timeSlot", 1), ("position", 1)]))
-    return json_response({"entries": [serialize_waiting(x) for x in rows]})
+    try:
+        waiting = get_waiting_queue_collection()
+        query = {"userId": user_id} if user_id else {}
+        rows = list(waiting.find(query).sort([("date", -1), ("timeSlot", 1), ("position", 1)]))
+        return json_response({"entries": [serialize_waiting(x) for x in rows]})
+    except Exception as e:
+        return json_response({"entries": [], "error": "db_unavailable", "detail": str(e)}, 200)
 
 
 @reservations_bp.post("/reservation-waiting-queue")
@@ -199,31 +220,40 @@ def join_waiting_queue():
         "updatedAt": utc_now(),
     }
 
-    waiting = get_waiting_queue_collection()
-    waiting.update_one(
-        {"queueId": entry["queueId"]},
-        {"$set": entry},
-        upsert=True,
-    )
+    try:
+        waiting = get_waiting_queue_collection()
+        waiting.update_one(
+            {"queueId": entry["queueId"]},
+            {"$set": entry},
+            upsert=True,
+        )
+    except Exception as e:
+        return json_response({"error": "db_unavailable", "detail": str(e)}, 503)
     return json_response(serialize_waiting(entry), 201)
 
 
 @reservations_bp.delete("/reservation-waiting-queue/<queue_id>")
 def delete_waiting_entry(queue_id: str):
-    waiting = get_waiting_queue_collection()
-    result = waiting.delete_one({"queueId": queue_id})
-    if result.deleted_count == 0:
-        return json_response({"error": "not_found"}, 404)
-    return json_response({"ok": True})
+    try:
+        waiting = get_waiting_queue_collection()
+        result = waiting.delete_one({"queueId": queue_id})
+        if result.deleted_count == 0:
+            return json_response({"error": "not_found"}, 404)
+        return json_response({"ok": True})
+    except Exception as e:
+        return json_response({"error": "db_unavailable", "detail": str(e)}, 503)
 
 
 def _get_next_available_table(date: str, time_slot: str):
-    reservations = get_reservations_collection()
-    reserved = {
-        int(r.get("tableNumber", 0))
-        for r in reservations.find({"date": date, "timeSlot": time_slot}, {"tableNumber": 1})
-        if r.get("tableNumber")
-    }
+    try:
+        reservations = get_reservations_collection()
+        reserved = {
+            int(r.get("tableNumber", 0))
+            for r in reservations.find({"date": date, "timeSlot": time_slot}, {"tableNumber": 1})
+            if r.get("tableNumber")
+        }
+    except Exception:
+        reserved = set()
 
     total = max(len(_get_admin_tables()), 12)
     for n in range(1, total + 1):
@@ -233,6 +263,9 @@ def _get_next_available_table(date: str, time_slot: str):
 
 
 def _next_waiting_position(date: str, time_slot: str) -> int:
-    waiting = get_waiting_queue_collection()
-    count = waiting.count_documents({"date": date, "timeSlot": time_slot})
-    return int(count) + 1
+    try:
+        waiting = get_waiting_queue_collection()
+        count = waiting.count_documents({"date": date, "timeSlot": time_slot})
+        return int(count) + 1
+    except Exception:
+        return 1

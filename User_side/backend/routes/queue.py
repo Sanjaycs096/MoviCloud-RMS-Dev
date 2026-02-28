@@ -61,17 +61,20 @@ def list_queue():
     queue_date = request.args.get("queueDate")
     user_id = request.args.get("userId")
 
-    queue_col = get_queue_collection()
-    query = {}
-    if queue_date:
-        query["queueDate"] = queue_date
-    if user_id:
-        query["userId"] = user_id
+    try:
+        queue_col = get_queue_collection()
+        query = {}
+        if queue_date:
+            query["queueDate"] = queue_date
+        if user_id:
+            query["userId"] = user_id
 
-    entries = list(queue_col.find(query).sort([
-        ("queueDate", -1), ("timeSlot", 1), ("position", 1)
-    ]))
-    return json_response({"entries": [serialize_entry(e) for e in entries]})
+        entries = list(queue_col.find(query).sort([
+            ("queueDate", -1), ("timeSlot", 1), ("position", 1)
+        ]))
+        return json_response({"entries": [serialize_entry(e) for e in entries]})
+    except Exception as e:
+        return json_response({"entries": [], "error": "db_unavailable", "detail": str(e)}, 200)
 
 
 @queue_bp.post("/queue/join")
@@ -83,36 +86,39 @@ def join_queue():
         if k not in data:
             return json_response({"error": f"{k}_required"}, 400)
 
-    queue_col = get_queue_collection()
+    try:
+        queue_col = get_queue_collection()
 
-    position = _calculate_position(
-        data["queueDate"], data["timeSlot"],
-        int(data["guests"]), data["hall"], data["segment"]
-    )
+        position = _calculate_position(
+            data["queueDate"], data["timeSlot"],
+            int(data["guests"]), data["hall"], data["segment"]
+        )
 
-    entry = {
-        "id": str(data["id"]),
-        "userId": data.get("userId", data.get("contact")),
-        "name": str(data["name"]),
-        "guests": int(data["guests"]),
-        "notificationMethod": data.get("notificationMethod", "sms"),
-        "contact": str(data["contact"]),
-        "hall": str(data["hall"]),
-        "segment": str(data["segment"]),
-        "position": position,
-        "estimatedWaitMinutes": _calculate_wait_time(data["queueDate"], data["timeSlot"]),
-        "joinedAt": data.get("joinedAt", utc_now()),
-        "queueDate": str(data["queueDate"]),
-        "timeSlot": str(data["timeSlot"]),
-        "timeSlotDisplay": _get_time_slot_display(data["timeSlot"]),
-        "notifiedAt15Min": False,
-        "tableAvailable": False,
-        "notificationExpiresAt": None,
-        "fromReservationCancellation": False,
-    }
+        entry = {
+            "id": str(data["id"]),
+            "userId": data.get("userId", data.get("contact")),
+            "name": str(data["name"]),
+            "guests": int(data["guests"]),
+            "notificationMethod": data.get("notificationMethod", "sms"),
+            "contact": str(data["contact"]),
+            "hall": str(data["hall"]),
+            "segment": str(data["segment"]),
+            "position": position,
+            "estimatedWaitMinutes": _calculate_wait_time(data["queueDate"], data["timeSlot"]),
+            "joinedAt": data.get("joinedAt", utc_now()),
+            "queueDate": str(data["queueDate"]),
+            "timeSlot": str(data["timeSlot"]),
+            "timeSlotDisplay": _get_time_slot_display(data["timeSlot"]),
+            "notifiedAt15Min": False,
+            "tableAvailable": False,
+            "notificationExpiresAt": None,
+            "fromReservationCancellation": False,
+        }
 
-    queue_col.replace_one({"id": entry["id"]}, entry, upsert=True)
-    return json_response(serialize_entry(entry), 201)
+        queue_col.replace_one({"id": entry["id"]}, entry, upsert=True)
+        return json_response(serialize_entry(entry), 201)
+    except Exception as e:
+        return json_response({"error": "db_unavailable", "detail": str(e)}, 503)
 
 
 # ✅ STATIC — must be before /queue/<entry_id>
@@ -134,26 +140,29 @@ def check_slot_availability():
     if not all([queue_date, time_slot, hall, segment]):
         return json_response({"error": "missing_parameters"}, 400)
 
-    reservations_col = get_reservations_collection()
+    try:
+        reservations_col = get_reservations_collection()
 
-    reservation_time_slot = QUEUE_TO_RESERVATION_TIMESLOT.get(time_slot, time_slot)
+        reservation_time_slot = QUEUE_TO_RESERVATION_TIMESLOT.get(time_slot, time_slot)
 
-    query: Dict[str, Any] = {
-        "date": queue_date,
-        "timeSlot": reservation_time_slot,
-    }
+        query: Dict[str, Any] = {
+            "date": queue_date,
+            "timeSlot": reservation_time_slot,
+        }
 
-    if hall != "Any":
-        query["location"] = {"$regex": map_hall_to_location(hall), "$options": "i"}
+        if hall != "Any":
+            query["location"] = {"$regex": map_hall_to_location(hall), "$options": "i"}
 
-    if segment != "Any":
-        query["segment"] = {"$regex": f"^{segment}", "$options": "i"}
+        if segment != "Any":
+            query["segment"] = {"$regex": f"^{segment}", "$options": "i"}
 
-    reservation = reservations_col.find_one(query)
-    return json_response({
-        "isReserved": reservation is not None,
-        "available": reservation is None,
-    })
+        reservation = reservations_col.find_one(query)
+        return json_response({
+            "isReserved": reservation is not None,
+            "available": reservation is None,
+        })
+    except Exception as e:
+        return json_response({"isReserved": False, "available": True, "error": "db_unavailable", "detail": str(e)}, 200)
 
 
 # ✅ STATIC — frontend polls this every 5s to detect backend-triggered availability
@@ -168,7 +177,10 @@ def poll_queue_status():
     if not user_id:
         return json_response({"error": "userId_required"}, 400)
 
-    queue_col = get_queue_collection()
+    try:
+        queue_col = get_queue_collection()
+    except Exception as e:
+        return json_response({"entry": None, "tableAvailable": False, "error": "db_unavailable"}, 200)
 
     # Check if this user has a tableAvailable=True entry (set by reservation cancellation)
     notified_entry = queue_col.find_one({"userId": user_id, "tableAvailable": True})
@@ -211,69 +223,81 @@ def poll_queue_status():
 @queue_bp.get("/queue/debug")
 def debug_queue():
     """Visit /api/queue/debug in browser to verify stored data — remove in production"""
-    queue_col = get_queue_collection()
-    all_entries = list(queue_col.find({}))
-    return json_response({
-        "count": len(all_entries),
-        "entries": [serialize_entry(e) for e in all_entries]
-    })
+    try:
+        queue_col = get_queue_collection()
+        all_entries = list(queue_col.find({}))
+        return json_response({
+            "count": len(all_entries),
+            "entries": [serialize_entry(e) for e in all_entries]
+        })
+    except Exception as e:
+        return json_response({"count": 0, "entries": [], "error": str(e)}, 200)
 
 
 # ✅ DYNAMIC — after all static routes
 @queue_bp.delete("/queue/<entry_id>")
 def cancel_queue(entry_id: str):
-    queue_col = get_queue_collection()
+    try:
+        queue_col = get_queue_collection()
 
-    entry = queue_col.find_one({"id": entry_id})
-    if not entry:
-        return json_response({"error": "not_found"}, 404)
+        entry = queue_col.find_one({"id": entry_id})
+        if not entry:
+            return json_response({"error": "not_found"}, 404)
 
-    queue_col.delete_one({"id": entry_id})
-    _resequence_queue(
-        entry["queueDate"], entry["timeSlot"],
-        entry["guests"], entry["hall"], entry["segment"]
-    )
-    return json_response({"ok": True})
+        queue_col.delete_one({"id": entry_id})
+        _resequence_queue(
+            entry["queueDate"], entry["timeSlot"],
+            entry["guests"], entry["hall"], entry["segment"]
+        )
+        return json_response({"ok": True})
+    except Exception as e:
+        return json_response({"error": "db_unavailable", "detail": str(e)}, 503)
 
 
 @queue_bp.patch("/queue/<entry_id>")
 def update_queue_entry(entry_id: str):
-    queue_col = get_queue_collection()
+    try:
+        queue_col = get_queue_collection()
 
-    entry = queue_col.find_one({"id": entry_id})
-    if not entry:
-        return json_response({"error": "not_found"}, 404)
+        entry = queue_col.find_one({"id": entry_id})
+        if not entry:
+            return json_response({"error": "not_found"}, 404)
 
-    data = get_json(request)
-    update_fields: Dict[str, Any] = {}
+        data = get_json(request)
+        update_fields: Dict[str, Any] = {}
 
-    if "notifiedAt15Min" in data:
-        update_fields["notifiedAt15Min"] = bool(data["notifiedAt15Min"])
-    if "tableAvailable" in data:
-        update_fields["tableAvailable"] = bool(data["tableAvailable"])
-    if "notificationExpiresAt" in data:
-        update_fields["notificationExpiresAt"] = data["notificationExpiresAt"]
-    if "estimatedWaitMinutes" in data:
-        update_fields["estimatedWaitMinutes"] = float(data["estimatedWaitMinutes"])
-    if "fromReservationCancellation" in data:
-        update_fields["fromReservationCancellation"] = bool(data["fromReservationCancellation"])
+        if "notifiedAt15Min" in data:
+            update_fields["notifiedAt15Min"] = bool(data["notifiedAt15Min"])
+        if "tableAvailable" in data:
+            update_fields["tableAvailable"] = bool(data["tableAvailable"])
+        if "notificationExpiresAt" in data:
+            update_fields["notificationExpiresAt"] = data["notificationExpiresAt"]
+        if "estimatedWaitMinutes" in data:
+            update_fields["estimatedWaitMinutes"] = float(data["estimatedWaitMinutes"])
+        if "fromReservationCancellation" in data:
+            update_fields["fromReservationCancellation"] = bool(data["fromReservationCancellation"])
 
-    if update_fields:
-        queue_col.update_one({"id": entry_id}, {"$set": update_fields})
+        if update_fields:
+            queue_col.update_one({"id": entry_id}, {"$set": update_fields})
 
-    updated = queue_col.find_one({"id": entry_id})
-    return json_response(serialize_entry(updated))
+        updated = queue_col.find_one({"id": entry_id})
+        return json_response(serialize_entry(updated))
+    except Exception as e:
+        return json_response({"error": "db_unavailable", "detail": str(e)}, 503)
 
 
 # ─── helpers ─────────────────────────────────────────────────────────────────
 
 def _calculate_position(queue_date: str, time_slot: str, guests: int, hall: str, segment: str) -> int:
-    queue_col = get_queue_collection()
-    count = queue_col.count_documents({
-        "queueDate": queue_date, "timeSlot": time_slot,
-        "guests": guests, "hall": hall, "segment": segment,
-    })
-    return count + 1
+    try:
+        queue_col = get_queue_collection()
+        count = queue_col.count_documents({
+            "queueDate": queue_date, "timeSlot": time_slot,
+            "guests": guests, "hall": hall, "segment": segment,
+        })
+        return count + 1
+    except Exception:
+        return 1
 
 
 def _calculate_wait_time(queue_date: str, time_slot: str) -> float:
@@ -288,14 +312,17 @@ def _calculate_wait_time(queue_date: str, time_slot: str) -> float:
 
 
 def _resequence_queue(queue_date: str, time_slot: str, guests: int, hall: str, segment: str) -> None:
-    queue_col = get_queue_collection()
-    entries = list(queue_col.find({
-        "queueDate": queue_date, "timeSlot": time_slot,
-        "guests": guests, "hall": hall, "segment": segment,
-    }).sort("joinedAt", 1))
+    try:
+        queue_col = get_queue_collection()
+        entries = list(queue_col.find({
+            "queueDate": queue_date, "timeSlot": time_slot,
+            "guests": guests, "hall": hall, "segment": segment,
+        }).sort("joinedAt", 1))
 
-    for idx, entry in enumerate(entries, start=1):
-        queue_col.update_one({"id": entry["id"]}, {"$set": {"position": idx}})
+        for idx, entry in enumerate(entries, start=1):
+            queue_col.update_one({"id": entry["id"]}, {"$set": {"position": idx}})
+    except Exception:
+        pass  # Non-critical: resequencing failure shouldn't abort caller
 
 
 def _get_time_slot_display(time_slot: str) -> str:
