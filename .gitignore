@@ -1,0 +1,3 @@
+﻿
+# Root package.json excluded — prevents Render from auto-detecting as Node.js
+package.json
