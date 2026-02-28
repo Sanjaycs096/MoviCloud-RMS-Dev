@@ -400,7 +400,27 @@ def _auto_seed():
 _threading.Thread(target=_auto_seed, daemon=True, name="auto-seed").start()
 
 
-if __name__ == "__main__":
+# ── 7. Keep-alive ping (Render free plan防sleep) ──────────────────────────────
+# Render free-tier services spin down after 15 min of inactivity.
+# This thread pings /health every 10 minutes to keep the service awake.
+# On paid plans it's a no-op (the ping just succeeds cheaply).
+def _keep_alive():
+    import time, urllib.request, urllib.error
+    port = os.getenv("PORT", "10000")
+    url  = f"http://localhost:{port}/health"
+    # Wait for server to fully start before first ping
+    time.sleep(30)
+    print(f"[keep-alive] Starting — pinging {url} every 10 minutes to prevent sleep")
+    while True:
+        try:
+            with urllib.request.urlopen(url, timeout=10) as resp:
+                print(f"[keep-alive] ✓ ping OK ({resp.status})")
+        except Exception as exc:
+            print(f"[keep-alive] ⚠ ping failed: {exc}")
+        time.sleep(600)  # 10 minutes
+
+_threading.Thread(target=_keep_alive, daemon=True, name="keep-alive").start()
+
     import uvicorn
 
     uvicorn.run(
